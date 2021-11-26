@@ -8,7 +8,9 @@ import ch.epfl.cs107.play.window.Window;
 
 abstract public class SimpleArea extends Area {
 	private Window window;
-	
+
+	private final float DEFAULT_SCALE_FACTOR = 10.f;
+
 	/**
      * Create the area by adding all its actors
      * called by the begin method, when the area starts to play
@@ -42,6 +44,6 @@ abstract public class SimpleArea extends Area {
 	 
 	 @Override
 	    public final float getCameraScaleFactor() {
-	        return 13;
+	        return DEFAULT_SCALE_FACTOR;
 	    }
 }
