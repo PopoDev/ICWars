@@ -30,7 +30,7 @@ public abstract class Cell implements Interactable{
 
     /**
      * Do the given draggableAreaEntity interacts with all Droppable sharing the same cell
-     * @param interactor (Interactor), not null
+     * @param draggable (Interactor), not null
      */
     public void dropInteractionOf(Draggable draggable) {
     	for(Interactable interactable : entities){
