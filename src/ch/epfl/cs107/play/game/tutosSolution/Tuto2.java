@@ -11,6 +11,7 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Window;
 
 public class Tuto2 extends AreaGame {
+	
 	public final static float CAMERA_SCALE_FACTOR = 13.f;
 
 	private GhostPlayer player;

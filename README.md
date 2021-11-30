@@ -1,1 +1,1 @@
-# MP2_Maquette
+# MP2

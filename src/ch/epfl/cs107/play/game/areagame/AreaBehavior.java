@@ -23,8 +23,8 @@ import ch.epfl.cs107.play.window.Window;
 public abstract class AreaBehavior implements Interactable.Listener, Interactor.Listener{
 
     /// The behavior is an Image of size height x width
-    protected final Image behaviorMap;
-    protected final int width, height;
+    private final Image behaviorMap;
+    private final int width, height;
     /// We will convert the image into an array of cells
     private final Cell[][] cells;
 
