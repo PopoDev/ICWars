@@ -1,6 +1,8 @@
 package ch.epfl.cs107.play.game.tutos;
 
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
+import ch.epfl.cs107.play.game.areagame.actor.Interactable;
+import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.window.Window;
 
 public class Tuto2Behavior extends AreaBehavior {
@@ -10,7 +12,7 @@ public class Tuto2Behavior extends AreaBehavior {
 
         for (int x = 0; x < getWidth(); ++x) {
             for (int y = 0; y < getHeight(); ++y) {
-                Tuto2CellType cellType = Tuto2CellType.toType(getRGB(height -1-y, x));
+                Tuto2CellType cellType = Tuto2CellType.toType(getRGB(height - 1 - y, x));
                 setCell(x, y, new Tuto2Cell(x, y, cellType));
             }
         }
@@ -33,10 +35,37 @@ public class Tuto2Behavior extends AreaBehavior {
 
         static Tuto2CellType toType(int type) {
             for (Tuto2CellType tuto2CellType : Tuto2CellType.values()) {
-                if (type == tuto2CellType.type) { return tuto2CellType; }
+                if (type == tuto2CellType.type) {
+                    return tuto2CellType;
+                }
             }
             return Tuto2CellType.NULL;
         }
+    }
 
+    public class Tuto2Cell extends AreaBehavior.Cell {
+
+        private Tuto2CellType type;
+
+        public Tuto2Cell(int x, int y, Tuto2CellType type) {
+            super(x, y);
+            this.type = type;
+        }
+
+        @Override
+        protected boolean canLeave(Interactable entity) { return true; }
+
+        @Override
+        protected boolean canEnter(Interactable entity) { return type.isWalkable; }
+
+        @Override
+        public boolean isCellInteractable() { return true; }
+
+        @Override
+        public boolean isViewInteractable() { return false; }
+
+        @Override
+        public void acceptInteraction(AreaInteractionVisitor v) {
+        }
     }
 }
