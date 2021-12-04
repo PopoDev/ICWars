@@ -12,12 +12,12 @@ public class Soldier extends Unit {
     private Sprite sprite;
     private String spriteName;
 
-    private final int HP_MAX = 5;
+    // HP_MAX = 5  // TODO Better a static variable or directly a value in constructor
+    // MOVE_RADIUS = 2
     private final int DAMAGE = 2;
-    private final int MOVE_RADIUS = 2;
 
     public Soldier(Faction faction, Area owner, DiscreteCoordinates position) {
-        super(faction, owner, position);
+        super(faction, owner, position, 5, 2);
         if (isAlly()) {
             spriteName = "icwars/friendlySoldier";
         } else {
@@ -26,7 +26,6 @@ public class Soldier extends Unit {
         sprite = new Sprite(spriteName, 1.5f, 1.5f, this, null, new Vector(-0.25f, -0.25f));
 
         setName("");  // TODO When do you give a name to Unit ?
-        setHp(HP_MAX);
     }
 
     @Override
@@ -38,13 +37,7 @@ public class Soldier extends Unit {
     public void acceptInteraction(AreaInteractionVisitor v) {
     }
 
-
-    @Override
-    protected int getHpMax() { return HP_MAX; }
-
     @Override
     protected int getDamage() { return DAMAGE; }
 
-    @Override
-    protected int getMoveRadius() { return MOVE_RADIUS; }
 }

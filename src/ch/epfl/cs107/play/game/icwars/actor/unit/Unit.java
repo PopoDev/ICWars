@@ -9,16 +9,21 @@ public abstract class Unit extends ICWarsActor {
 
     private String name;
     private int hp;
+    private final int HP_MAX;
+    private final int MOVE_RADIUS;
 
-    public Unit(ICWarsActor.Faction faction, Area owner, DiscreteCoordinates position) {
+    public Unit(ICWarsActor.Faction faction, Area owner, DiscreteCoordinates position, int hpMax, int moveRadius) {
         super(faction, owner, position);
+
+        this.HP_MAX = hpMax;
+        this.hp = hpMax;
+        this.MOVE_RADIUS = moveRadius;
     }
 
     private String getName() { return name; }
     protected void setName(String name) { this.name = name; }
 
     private int getHp() { return hp; }
-    protected void setHp(int hp) { this.hp = hp; }
 
     public boolean isDead() { return hp <= 0; }
 
@@ -37,7 +42,7 @@ public abstract class Unit extends ICWarsActor {
      */
     private void repair(int amount) {
         hp += amount;
-        if (hp > getHpMax()) { hp = getHpMax(); }
+        if (hp > HP_MAX) { hp = HP_MAX; }
     }
 
     /**
@@ -46,13 +51,12 @@ public abstract class Unit extends ICWarsActor {
      */
     private void attack(Unit other) { other.takeDamage(this.getDamage()); }
 
+    private boolean canMove(int radius) { return radius <= MOVE_RADIUS; }
+
     //-------------------------//
     // Specific to a Unit type
     //-------------------------//
-    // TODO Is this a good conception ? Use getters or override methods in subclass or can we use constructor?
-    protected abstract int getHpMax();
     protected abstract int getDamage();
-    protected abstract int getMoveRadius();
 
     //----------------//
     // Interactable
