@@ -11,18 +11,16 @@ import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor {
 
-    private List<Unit> units;
+    protected List<Unit> units;
 
     public ICWarsPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position);
         this.units = List.of(units);
         registerUnits(owner, this.units);
-
     }
 
     private void registerUnits(Area owner, List<Unit> units) {
         for (Unit unit : units) {
-            //unit.enterArea(owner, new DiscreteCoordinates());
             owner.registerActor(unit);
         }
         ((ICWarsArea)owner).registerUnits(units);
@@ -51,6 +49,9 @@ public abstract class ICWarsPlayer extends ICWarsActor {
         unregisterUnits(getOwnerArea(), units, false);
         getOwnerArea().unregisterActor(this);
     }
+
+    /** Return <code>true</code> if the ICWarsPlayer has zero unit */
+    public boolean isDefeated() { return units.size() == 0; }
 
     @Override
     public void update(float deltaTime) {

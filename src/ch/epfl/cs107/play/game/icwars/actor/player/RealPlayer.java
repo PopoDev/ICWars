@@ -3,7 +3,9 @@ package ch.epfl.cs107.play.game.icwars.actor.player;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
+import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
@@ -14,7 +16,10 @@ public class RealPlayer extends ICWarsPlayer {
     private Sprite sprite;
     private String spriteName;
 
-    private final int MOVE_DURATION = 8;
+    private final int MOVE_DURATION = 5;
+
+    private Unit selectedUnit;
+    private ICWarsPlayerGUI playerGUI;
 
     public RealPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position, units);
@@ -26,11 +31,20 @@ public class RealPlayer extends ICWarsPlayer {
         }
 
         sprite = new Sprite(spriteName, 1.f, 1.f,this);
+
+        playerGUI = new ICWarsPlayerGUI(ICWars.CAMERA_SCALE_FACTOR, this);
+    }
+
+    public void selectUnit(int indexUnit) {
+        if (indexUnit >= units.size()) { return; }  // Index too big
+        selectedUnit = units.get(indexUnit);
+        playerGUI.setSelectedUnit(selectedUnit);
     }
 
     @Override
     public void draw(Canvas canvas) {
         sprite.draw(canvas);
+        playerGUI.draw(canvas);
     }
 
     @Override
