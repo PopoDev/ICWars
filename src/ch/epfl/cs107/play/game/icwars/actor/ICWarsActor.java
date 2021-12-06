@@ -49,4 +49,8 @@ public abstract class ICWarsActor extends MovableAreaEntity {
     public enum Faction {
         ALLY, ENEMY
     }
+
+    public enum States{
+        IDLE, NORMAL, SELECT_CELL, MOVE_UNIT, ACTION_SELECTION, ACTION
+    }
 }

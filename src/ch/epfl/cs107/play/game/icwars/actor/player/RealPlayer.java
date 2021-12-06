@@ -56,6 +56,30 @@ public class RealPlayer extends ICWarsPlayer {
         moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
 
+        switch(state) {
+            case IDLE:
+                break;
+            case NORMAL:
+                if(keyboard.get(Keyboard.ENTER).isDown()) {
+                   state = States.SELECT_CELL;
+                }
+                if(keyboard.get(Keyboard.TAB).isDown()) {
+                    state = States.IDLE;
+                }
+                break;
+            case SELECT_CELL:
+                if(true) { // TODO if a unit has been selected
+                    state = States.MOVE_UNIT;
+                }
+                break;
+            case MOVE_UNIT:
+                if(keyboard.get(Keyboard.ENTER).isDown()) {
+                    //TODO: move the unit
+                    state = States.NORMAL;
+                }
+            case ACTION_SELECTION:
+            case ACTION:
+        }
         super.update(deltaTime);
     }
 

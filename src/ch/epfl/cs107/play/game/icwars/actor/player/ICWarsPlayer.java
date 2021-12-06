@@ -12,11 +12,13 @@ import java.util.List;
 public abstract class ICWarsPlayer extends ICWarsActor {
 
     protected List<Unit> units;
+    protected States state;
 
     public ICWarsPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position);
         this.units = List.of(units);
         registerUnits(owner, this.units);
+        state = States.IDLE;
     }
 
     private void registerUnits(Area owner, List<Unit> units) {
