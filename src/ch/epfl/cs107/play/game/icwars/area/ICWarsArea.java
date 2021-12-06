@@ -47,6 +47,7 @@ public abstract class ICWarsArea extends Area {
     }
 
     public abstract DiscreteCoordinates getPlayerSpawnPosition();
+    public abstract DiscreteCoordinates getEnemySpawnPosition();
 
     @Override
     public float getCameraScaleFactor() { return ICWars.CAMERA_SCALE_FACTOR; }

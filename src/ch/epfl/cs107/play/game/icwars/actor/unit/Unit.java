@@ -49,7 +49,10 @@ public abstract class Unit extends ICWarsActor {
     }
 
     private String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public Unit setName(String name) {
+        this.name = name;
+        return this;
+    }
 
     private int getHp() { return hp; }
 
