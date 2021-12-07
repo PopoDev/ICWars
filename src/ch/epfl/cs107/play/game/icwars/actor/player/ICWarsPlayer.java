@@ -1,15 +1,18 @@
 package ch.epfl.cs107.play.game.icwars.actor.player;
 
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
+import ch.epfl.cs107.play.game.icwars.area.ICWarsRange;
+import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 import java.util.List;
 
-public abstract class ICWarsPlayer extends ICWarsActor {
+public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     protected List<Unit> units;
     protected States state;
@@ -62,6 +65,23 @@ public abstract class ICWarsPlayer extends ICWarsActor {
         super.update(deltaTime);
     }
 
+    public void startTurn() {
+        state = States.NORMAL;
+        centerCamera();
+        //les unités redeviennent dispo ?
+    }
+
+    public  void allUnitAvailable(boolean available){
+        for (Unit unit : units) {
+           unit.setAvailable(available);
+            }
+    }
+    @Override
+    public void onLeaving(List<DiscreteCoordinates> coordinates) {
+        state = States.NORMAL;
+    }
+
+
     @Override
     public boolean takeCellSpace() { return false; }
 
@@ -73,6 +93,14 @@ public abstract class ICWarsPlayer extends ICWarsActor {
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
-
+        ((ICWarsInteractionVisitor)v).interactWith(this);
     }
+
+    @Override
+    public boolean wantsCellInteraction() {  return true; }
+
+    @Override
+    public boolean wantsViewInteraction() { return false; }
+
+
 }

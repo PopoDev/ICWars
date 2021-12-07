@@ -17,6 +17,7 @@ public abstract class Unit extends ICWarsActor {
     private int hp;
     private final int HP_MAX;
     private final int MOVE_RADIUS;
+    private boolean available;
 
     private ICWarsRange range;
 
@@ -119,5 +120,17 @@ public abstract class Unit extends ICWarsActor {
     @Override
     public boolean isViewInteractable() {
         return false;
+    }
+
+    @Override
+    public boolean changePosition(DiscreteCoordinates newPosition){
+        if(range.nodeExists(newPosition)) {
+            return super.changePosition(newPosition);
+        }
+        return false;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }
