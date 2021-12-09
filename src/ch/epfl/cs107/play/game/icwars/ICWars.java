@@ -43,10 +43,6 @@ public class ICWars extends AreaGame {
         buttonNextLevel(keyboard.get(Keyboard.N));
         buttonReset(keyboard.get(Keyboard.R));
 
-        // if (keyboard.get(Keyboard.U).isReleased()) { realPlayer.selectUnit(1); }
-
-
-
         //----------------//
         // Game dynamics
         //----------------//
@@ -64,12 +60,13 @@ public class ICWars extends AreaGame {
                 }
                 break;
             case START_PLAYER_TURN :
-                // TODO currentlyActivePlayer.startTurn();
+                currentlyActivePlayer.startTurn();
                 gameState = GameState.PLAYER_TURN;
                 break;
             case PLAYER_TURN :
-                // TODO player --> IDLE
-                gameState = GameState.END_PLAYER_TURN;
+                if (currentlyActivePlayer.finishedTurn() || keyboard.get(Keyboard.TAB).isPressed()) {
+                    gameState = GameState.END_PLAYER_TURN;
+                }
                 break;
             case END_PLAYER_TURN :
                 if (isPlayerDefeated(currentlyActivePlayer)) {
@@ -153,6 +150,9 @@ public class ICWars extends AreaGame {
     private void nextLevel() {
         if (areaIndex < areas.length - 1) {
             System.out.println("Next level");
+            gameState = GameState.INIT;
+            clearPlayers();
+
             // Clean the registered actors
             for (ICWarsPlayer player : players) {
                 player.leaveArea();
@@ -173,6 +173,9 @@ public class ICWars extends AreaGame {
 
     private void reset() {
         System.out.println("Reset");
+        gameState = GameState.INIT;
+        clearPlayers();
+
         // Clean the registered actors
         for (ICWarsPlayer player : players) {
             player.leaveArea();
@@ -189,6 +192,13 @@ public class ICWars extends AreaGame {
     private void removePlayerDefeated(ICWarsPlayer player) {
         waitingNextRound.remove(player);
         player.leaveArea();  // Unregister the player from the game
+    }
+
+    private void clearPlayers() {
+        players.clear();
+        waitingCurrentRound.clear();
+        waitingNextRound.clear();
+        currentlyActivePlayer = null;
     }
 
     private enum GameState {

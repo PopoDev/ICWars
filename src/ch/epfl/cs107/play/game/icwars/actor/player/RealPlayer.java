@@ -1,14 +1,11 @@
 package ch.epfl.cs107.play.game.icwars.actor.player;
 
 import ch.epfl.cs107.play.game.areagame.Area;
-import ch.epfl.cs107.play.game.areagame.AreaGraph;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.ICWars;
-import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
-import ch.epfl.cs107.play.game.icwars.area.ICWarsRange;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -20,13 +17,12 @@ import java.util.List;
 
 public class RealPlayer extends ICWarsPlayer {
 
-    private Sprite sprite;
-    private String spriteName;
+    private final Sprite sprite;
+    private final String spriteName;
 
     private final int MOVE_DURATION = 5;
 
-    private Unit selectedUnit;
-    private ICWarsPlayerGUI playerGUI;
+    private final ICWarsPlayerGUI playerGUI;
 
     public RealPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position, units);
@@ -40,27 +36,21 @@ public class RealPlayer extends ICWarsPlayer {
         sprite = new Sprite(spriteName, 1.f, 1.f,this);
 
         playerGUI = new ICWarsPlayerGUI(ICWars.CAMERA_SCALE_FACTOR, this);
-
-        startTurn();
-    }
-
-    public void selectUnit(int indexUnit) {
-        if (indexUnit >= units.size()) { return; }  // Index too big
-        selectedUnit = units.get(indexUnit);
-        playerGUI.setSelectedUnit(selectedUnit);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        sprite.draw(canvas);
+        if (state != PlayerState.IDLE) {
+            sprite.draw(canvas);
+        }
         playerGUI.draw(canvas);
     }
 
     @Override
     public void update(float deltaTime) {
-        Keyboard keyboard= getOwnerArea().getKeyboard();
+        Keyboard keyboard = getOwnerArea().getKeyboard();
 
-        if(state == States.MOVE_UNIT || state == States.NORMAL || state == States.SELECT_CELL) {
+        if (state == PlayerState.MOVE_UNIT || state == PlayerState.NORMAL || state == PlayerState.SELECT_CELL) {
             moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
             moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
             moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
@@ -71,27 +61,28 @@ public class RealPlayer extends ICWarsPlayer {
             case IDLE:
                 break;
             case NORMAL:
-                if(keyboard.get(Keyboard.ENTER).isDown()) {
-                   state = States.SELECT_CELL;
+                if(keyboard.get(Keyboard.ENTER).isPressed()) {
+                    state = PlayerState.SELECT_CELL;
                 }
-                if(keyboard.get(Keyboard.TAB).isDown()) {
-                    state = States.IDLE;
+                if(keyboard.get(Keyboard.TAB).isPressed()) {
+                    state = PlayerState.IDLE;
                 }
                 break;
             case SELECT_CELL:
                 if(selectedUnit != null) {
-                    state = States.MOVE_UNIT;
+                    state = PlayerState.MOVE_UNIT;
                 }
                 break;
             case MOVE_UNIT:
-                if(keyboard.get(Keyboard.ENTER).isDown()) {
-                    changePosition(new DiscreteCoordinates((int) getPosition().x,(int)getPosition().y));
-                    state = States.NORMAL;
+                if(keyboard.get(Keyboard.ENTER).isPressed()) {
+                    changePosition(getCurrentMainCellCoordinates());
+                    state = PlayerState.NORMAL;
                 }
             case ACTION_SELECTION:
             case ACTION:
         }
         super.update(deltaTime);
+
     }
 
     /**
@@ -122,7 +113,7 @@ public class RealPlayer extends ICWarsPlayer {
     private class ICWarsPlayerInteractionHandler implements ICWarsInteractionVisitor {
         @Override
         public void interactWith(Unit unit){
-            if((state == States.SELECT_CELL) && (unit.isAlly())){ //TODO : on the same cell
+            if((state == PlayerState.SELECT_CELL) && (unit.isAlly())){ //TODO : on the same cell
                 selectedUnit = unit;
                 //TODO : method concerning radius (movement)
             }
