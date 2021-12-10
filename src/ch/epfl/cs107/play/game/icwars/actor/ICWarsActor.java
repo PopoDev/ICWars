@@ -41,6 +41,9 @@ public abstract class ICWarsActor extends MovableAreaEntity {
     public boolean isAlly() {
         return faction == Faction.ALLY;
     }
+    public boolean areInSameFaction(ICWarsActor me, ICWarsActor other) {
+        return me.faction == other.faction;
+    }
 
     /** An ICWarsActor can belong either to an ally or enemy faction */
     public enum Faction {

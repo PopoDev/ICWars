@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
-    protected List<Unit> units;
+    private final List<Unit> units;
     protected Unit selectedUnit;
 
     protected PlayerState state;
@@ -69,7 +69,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         state = PlayerState.NORMAL;
         centerCamera();
         setAllUnitAvailable(true);
-        //les unités redeviennent dispo ?
     }
 
     public boolean finishedTurn() {
@@ -97,7 +96,9 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     @Override
     public void onLeaving(List<DiscreteCoordinates> coordinates) {
-        state = PlayerState.NORMAL;
+        if (state == PlayerState.SELECT_CELL) {
+            state = PlayerState.NORMAL;
+        }
     }
 
     @Override
@@ -120,7 +121,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     @Override
     public boolean wantsViewInteraction() { return false; }
 
-    public enum PlayerState {
+    protected enum PlayerState {
         IDLE, NORMAL, SELECT_CELL, MOVE_UNIT, ACTION_SELECTION, ACTION;
     }
 

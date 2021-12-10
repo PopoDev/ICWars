@@ -74,7 +74,6 @@ public class ICWars extends AreaGame {
                 } else {
                     waitingNextRound.add(currentlyActivePlayer);
                     gameState = GameState.CHOOSE_PLAYER;
-                    // TODO Units reusable
                 }
                 break;
             case END_TURN :

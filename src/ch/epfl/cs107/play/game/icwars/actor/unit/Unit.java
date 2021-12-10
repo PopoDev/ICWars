@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.icwars.actor.unit;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Path;
+import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsRange;
@@ -15,6 +16,7 @@ import java.util.Queue;
 // TODO Should be an inner class of ICWarsPlayer ?
 public abstract class Unit extends ICWarsActor {
 
+    private Sprite sprite;
     private String name;
     private int hp;
     private final int HP_MAX;
@@ -39,9 +41,18 @@ public abstract class Unit extends ICWarsActor {
         return this;
     }
 
+    protected void setSprite(Sprite sprite) {
+        this.sprite = sprite;
+    }
+
     private int getHp() { return hp; }
 
     public boolean isDead() { return hp <= 0; }
+
+    @Override
+    public void draw(Canvas canvas) {
+        sprite.draw(canvas);
+    }
 
     /**
      * The unit losoe an amount of health
@@ -85,9 +96,9 @@ public abstract class Unit extends ICWarsActor {
 
     @Override
     public boolean changePosition(DiscreteCoordinates newPosition) {
-        if(range.nodeExists(newPosition)) {
+        if(range.nodeExists(newPosition) && super.changePosition(newPosition)) {
             range = setRange(newPosition);
-            return super.changePosition(newPosition);
+            return true;
         }
         return false;
     }
@@ -117,7 +128,14 @@ public abstract class Unit extends ICWarsActor {
         return range;
     }
 
-    public void setAvailable(boolean available) { this.available = available; }
+    public void setAvailable(boolean available) {
+        this.available = available;
+        if (available) {
+            sprite.setAlpha(1.f);
+        } else {
+            sprite.setAlpha(0.5f);
+        }
+    }
 
     public boolean isAvailable() { return available; }
 
