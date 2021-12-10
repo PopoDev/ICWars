@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
-    private List<Unit> units;
+    protected List<Unit> units;
     protected Unit selectedUnit;
 
     protected PlayerState state;

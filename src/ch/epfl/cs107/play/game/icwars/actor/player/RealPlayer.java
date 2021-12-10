@@ -29,6 +29,8 @@ public class RealPlayer extends ICWarsPlayer {
     private Unit selectedUnit;
     private ICWarsPlayerGUI playerGUI;
 
+    private ICWarsPlayerInteractionHandler handler = new ICWarsPlayerInteractionHandler();
+
     public RealPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position, units);
 
@@ -80,6 +82,9 @@ public class RealPlayer extends ICWarsPlayer {
                 }
                 break;
             case SELECT_CELL:
+                for (Unit unit : units) {
+                    interactWith(unit);
+                }
                 if(selectedUnit != null) {
                     state = PlayerState.MOVE_UNIT;
                 }
@@ -113,15 +118,20 @@ public class RealPlayer extends ICWarsPlayer {
         return null;
     }
 
+    /**
+     * Ask other if it accepts interaction with RealPlayer
+     * @param other (Interactable). Not null
+     */
     @Override
     public void interactWith(Interactable other) {
-
+        // System.out.println("interactWith RealPlayer 1");
+        other.acceptInteraction(handler);
     }
-
 
     private class ICWarsPlayerInteractionHandler implements ICWarsInteractionVisitor {
         @Override
-        public void interactWith(Unit unit){
+        public void interactWith(Unit unit) {
+            System.out.println("interactWith Unit 2");
             if((state == PlayerState.SELECT_CELL) && (unit.isAlly())){
                 selectedUnit = unit;
                 unit.drawRangeAndPathTo(getCurrentMainCellCoordinates(), canvas);
