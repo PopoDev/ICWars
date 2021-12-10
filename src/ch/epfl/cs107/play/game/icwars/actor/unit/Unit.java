@@ -135,4 +135,11 @@ public abstract class Unit extends ICWarsActor {
     public boolean isViewInteractable() {
         return false;
     }
+
+    @Override
+    public void acceptInteraction(AreaInteractionVisitor v) {
+        System.out.println("acceptInteraction Unit");
+        ((ICWarsInteractionVisitor)v).interactWith(this);
+    }
+
 }

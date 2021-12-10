@@ -91,7 +91,7 @@ public class RealPlayer extends ICWarsPlayer {
                 break;
             case MOVE_UNIT:
                 if(keyboard.get(Keyboard.ENTER).isDown()) {
-                    selectedUnit.changePosition(new DiscreteCoordinates((int) getPosition().x,(int)getPosition().y));
+                    selectedUnit.changePosition(getCurrentMainCellCoordinates());
                     state = PlayerState.NORMAL;
                 }
             case ACTION_SELECTION:
@@ -134,7 +134,7 @@ public class RealPlayer extends ICWarsPlayer {
             System.out.println("interactWith Unit 2");
             if((state == PlayerState.SELECT_CELL) && (unit.isAlly())){
                 selectedUnit = unit;
-                unit.drawRangeAndPathTo(getCurrentMainCellCoordinates(), canvas);
+                selectedUnit.drawRangeAndPathTo(getCurrentMainCellCoordinates(), canvas);
             }
         }
     }
