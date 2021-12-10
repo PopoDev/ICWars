@@ -30,25 +30,7 @@ public abstract class Unit extends ICWarsActor {
         this.hp = hpMax;
         this.MOVE_RADIUS = moveRadius;
 
-        int fromX = position.x;
-        int fromY = position.y;
-        range = new ICWarsRange();
-        for (int x = -MOVE_RADIUS; x <= MOVE_RADIUS; ++x) {
-            // Out of the scope of the Area in the X axis
-            if ((x+fromX) < 0 || (x+fromX) > getOwnerArea().getWidth()) { continue; }
-
-            for (int y = -MOVE_RADIUS; y <= MOVE_RADIUS; ++y) {
-                // Out of the scope of the Area in the Y axis
-                if ((y+fromY) < 0 || (y+fromY) > getOwnerArea().getHeight()) { continue; }
-
-                boolean hasLeftEdge = x > -MOVE_RADIUS && (x+fromX) > 0;
-                boolean hasUpEdge = y < MOVE_RADIUS && (y+fromY) < getOwnerArea().getHeight();
-                boolean hasRightEdge = x < MOVE_RADIUS && (x+fromX) < getOwnerArea().getWidth();
-                boolean hasDownEdge = y > -MOVE_RADIUS && (y+fromY) > 0;
-                range.addNode(new DiscreteCoordinates(x + fromX, y + fromY),
-                        hasLeftEdge, hasUpEdge, hasRightEdge, hasDownEdge);
-            }
-        }
+        range = setRange(position);
     }
 
     private String getName() { return name; }
@@ -102,11 +84,37 @@ public abstract class Unit extends ICWarsActor {
     private boolean canMove(int radius) { return radius <= MOVE_RADIUS; }
 
     @Override
-    public boolean changePosition(DiscreteCoordinates newPosition){
+    public boolean changePosition(DiscreteCoordinates newPosition) {
         if(range.nodeExists(newPosition)) {
+            range = setRange(newPosition);
             return super.changePosition(newPosition);
         }
         return false;
+    }
+
+    private ICWarsRange setRange(DiscreteCoordinates position) {
+        int fromX = position.x;
+        int fromY = position.y;
+
+        ICWarsRange range = new ICWarsRange();
+
+        for (int x = -MOVE_RADIUS; x <= MOVE_RADIUS; ++x) {
+            // Out of the scope of the Area in the X axis
+            if ((x+fromX) < 0 || (x+fromX) > getOwnerArea().getWidth()) { continue; }
+
+            for (int y = -MOVE_RADIUS; y <= MOVE_RADIUS; ++y) {
+                // Out of the scope of the Area in the Y axis
+                if ((y+fromY) < 0 || (y+fromY) > getOwnerArea().getHeight()) { continue; }
+
+                boolean hasLeftEdge = x > -MOVE_RADIUS && (x+fromX) > 0;
+                boolean hasUpEdge = y < MOVE_RADIUS && (y+fromY) < getOwnerArea().getHeight();
+                boolean hasRightEdge = x < MOVE_RADIUS && (x+fromX) < getOwnerArea().getWidth();
+                boolean hasDownEdge = y > -MOVE_RADIUS && (y+fromY) > 0;
+                range.addNode(new DiscreteCoordinates(x + fromX, y + fromY),
+                        hasLeftEdge, hasUpEdge, hasRightEdge, hasDownEdge);
+            }
+        }
+        return range;
     }
 
     public void setAvailable(boolean available) { this.available = available; }
@@ -138,7 +146,6 @@ public abstract class Unit extends ICWarsActor {
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
-        System.out.println("acceptInteraction Unit");
         ((ICWarsInteractionVisitor)v).interactWith(this);
     }
 

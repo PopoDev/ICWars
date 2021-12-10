@@ -13,4 +13,6 @@ public interface ICWarsInteractionVisitor extends AreaInteractionVisitor {
     default void interactWith(Unit unit) {}
 
     default void interactWith(RealPlayer realPlayer) {}
+
+    default void interactWith(Interactable other) {}
 }
