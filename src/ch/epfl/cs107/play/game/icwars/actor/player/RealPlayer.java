@@ -22,7 +22,6 @@ public class RealPlayer extends ICWarsPlayer {
 
     private Sprite sprite;
     private String spriteName;
-    private Canvas canvas;
 
     private final int MOVE_DURATION = 5;
 
@@ -50,6 +49,7 @@ public class RealPlayer extends ICWarsPlayer {
         if (state != PlayerState.IDLE) {
             sprite.draw(canvas);
         }
+        playerGUI.setDestination(getCurrentMainCellCoordinates());
         playerGUI.draw(canvas);
     }
 
@@ -74,10 +74,10 @@ public class RealPlayer extends ICWarsPlayer {
             case IDLE:
                 break;
             case NORMAL:
-                if(keyboard.get(Keyboard.ENTER).isDown()) {
+                if(keyboard.get(Keyboard.ENTER).isPressed()) {
                     state = PlayerState.SELECT_CELL;
                 }
-                if(keyboard.get(Keyboard.TAB).isDown()) {
+                if(keyboard.get(Keyboard.TAB).isPressed()) {
                     state = PlayerState.IDLE;
                 }
                 break;
@@ -87,7 +87,7 @@ public class RealPlayer extends ICWarsPlayer {
                 }
                 break;
             case MOVE_UNIT:
-                if(keyboard.get(Keyboard.ENTER).isDown()) {
+                if(keyboard.get(Keyboard.ENTER).isPressed()) {
                     selectedUnit.changePosition(getCurrentMainCellCoordinates());
                     state = PlayerState.NORMAL;
                 }
@@ -129,9 +129,8 @@ public class RealPlayer extends ICWarsPlayer {
         public void interactWith(Unit unit) {
             if((state == PlayerState.SELECT_CELL) && (unit.isAlly())){
                 playerGUI.setSelectedUnit(unit);
-                playerGUI.setDestination(getCurrentMainCellCoordinates());
-                unit.drawRangeAndPathTo(getCurrentMainCellCoordinates(), canvas);
             }
         }
     }
+
 }
