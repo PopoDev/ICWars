@@ -68,7 +68,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     public void startTurn() {
         state = States.NORMAL;
         centerCamera();
-        //les unités redeviennent dispo ?
+        //unit disponible
     }
 
     public  void allUnitAvailable(boolean available){

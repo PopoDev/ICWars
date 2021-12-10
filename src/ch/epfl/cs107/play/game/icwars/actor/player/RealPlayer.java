@@ -22,6 +22,7 @@ public class RealPlayer extends ICWarsPlayer {
 
     private Sprite sprite;
     private String spriteName;
+    private Canvas canvas;
 
     private final int MOVE_DURATION = 5;
 
@@ -60,19 +61,25 @@ public class RealPlayer extends ICWarsPlayer {
     public void update(float deltaTime) {
         Keyboard keyboard= getOwnerArea().getKeyboard();
 
+        updateStates();
+
         if(state == States.MOVE_UNIT || state == States.NORMAL || state == States.SELECT_CELL) {
             moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
             moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
             moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
             moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
         }
+        super.update(deltaTime);
+    }
 
+    private void updateStates(){
+        Keyboard keyboard= getOwnerArea().getKeyboard();
         switch(state) {
             case IDLE:
                 break;
             case NORMAL:
                 if(keyboard.get(Keyboard.ENTER).isDown()) {
-                   state = States.SELECT_CELL;
+                    state = States.SELECT_CELL;
                 }
                 if(keyboard.get(Keyboard.TAB).isDown()) {
                     state = States.IDLE;
@@ -85,13 +92,12 @@ public class RealPlayer extends ICWarsPlayer {
                 break;
             case MOVE_UNIT:
                 if(keyboard.get(Keyboard.ENTER).isDown()) {
-                    changePosition(new DiscreteCoordinates((int) getPosition().x,(int)getPosition().y));
+                    selectedUnit.changePosition(new DiscreteCoordinates((int) getPosition().x,(int)getPosition().y));
                     state = States.NORMAL;
                 }
             case ACTION_SELECTION:
             case ACTION:
         }
-        super.update(deltaTime);
     }
 
     /**
@@ -122,9 +128,9 @@ public class RealPlayer extends ICWarsPlayer {
     private class ICWarsPlayerInteractionHandler implements ICWarsInteractionVisitor {
         @Override
         public void interactWith(Unit unit){
-            if((state == States.SELECT_CELL) && (unit.isAlly())){ //TODO : on the same cell
+            if((state == States.SELECT_CELL) && (unit.isAlly())){
                 selectedUnit = unit;
-                //TODO : method concerning radius (movement)
+                unit.drawRangeAndPathTo(getCurrentMainCellCoordinates(), canvas);
             }
         }
     }
