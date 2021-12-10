@@ -34,10 +34,6 @@ public class Soldier extends Unit {
     }
 
     @Override
-    public void acceptInteraction(AreaInteractionVisitor v) {
-    }
-
-    @Override
     protected int getDamage() { return DAMAGE; }
 
 }

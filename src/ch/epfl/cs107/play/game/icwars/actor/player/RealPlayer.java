@@ -43,13 +43,13 @@ public class RealPlayer extends ICWarsPlayer {
         sprite = new Sprite(spriteName, 1.f, 1.f,this);
 
         playerGUI = new ICWarsPlayerGUI(ICWars.CAMERA_SCALE_FACTOR, this);
-
-        startTurn();
     }
 
     @Override
     public void draw(Canvas canvas) {
-        sprite.draw(canvas);
+        if (state != PlayerState.IDLE) {
+            sprite.draw(canvas);
+        }
         playerGUI.draw(canvas);
     }
 
@@ -82,9 +82,6 @@ public class RealPlayer extends ICWarsPlayer {
                 }
                 break;
             case SELECT_CELL:
-                for (Unit unit : units) {
-                    interactWith(unit);
-                }
                 if(selectedUnit != null) {
                     state = PlayerState.MOVE_UNIT;
                 }
@@ -124,17 +121,16 @@ public class RealPlayer extends ICWarsPlayer {
      */
     @Override
     public void interactWith(Interactable other) {
-        // System.out.println("interactWith RealPlayer 1");
         other.acceptInteraction(handler);
     }
 
     private class ICWarsPlayerInteractionHandler implements ICWarsInteractionVisitor {
         @Override
         public void interactWith(Unit unit) {
-            System.out.println("interactWith Unit 2");
             if((state == PlayerState.SELECT_CELL) && (unit.isAlly())){
-                selectedUnit = unit;
-                selectedUnit.drawRangeAndPathTo(getCurrentMainCellCoordinates(), canvas);
+                playerGUI.setSelectedUnit(unit);
+                playerGUI.setDestination(getCurrentMainCellCoordinates());
+                unit.drawRangeAndPathTo(getCurrentMainCellCoordinates(), canvas);
             }
         }
     }
