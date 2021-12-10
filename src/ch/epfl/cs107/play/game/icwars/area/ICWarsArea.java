@@ -15,7 +15,7 @@ public abstract class ICWarsArea extends Area {
     private ICWarsBehavior behavior;
 
     // List of Unit inside the area
-    private List<Unit> actorsUnit = new ArrayList<>();
+    private final List<Unit> actorsUnit = new ArrayList<>();
 
     @Override
     public boolean begin(Window window, FileSystem fileSystem) {

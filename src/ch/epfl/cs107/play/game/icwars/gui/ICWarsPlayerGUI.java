@@ -11,6 +11,7 @@ public class ICWarsPlayerGUI implements Graphics {
 
     private final RealPlayer player;
     private Unit selectedUnit;
+    private DiscreteCoordinates destination;
 
     public ICWarsPlayerGUI(float cameraScaleFactor, ICWarsPlayer player) {
         this.player = (RealPlayer) player;
@@ -20,12 +21,12 @@ public class ICWarsPlayerGUI implements Graphics {
         this.selectedUnit = unit;
     }
 
+    public void setDestination(DiscreteCoordinates destination) { this.destination = destination; }
+
     @Override
     public void draw(Canvas canvas) {
         if (selectedUnit == null) { return; }
 
-        int x = (int) player.getPosition().getX();
-        int y = (int) player.getPosition().getY();
-        selectedUnit.drawRangeAndPathTo(new DiscreteCoordinates(x, y), canvas);
+        selectedUnit.drawRangeAndPathTo(destination, canvas);
     }
 }

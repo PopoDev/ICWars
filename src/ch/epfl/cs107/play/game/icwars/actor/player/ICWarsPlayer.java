@@ -6,7 +6,6 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
-import ch.epfl.cs107.play.game.icwars.area.ICWarsRange;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
@@ -14,14 +13,16 @@ import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
-    protected List<Unit> units;
-    protected States state;
+    private List<Unit> units;
+    protected Unit selectedUnit;
+
+    protected PlayerState state;
 
     public ICWarsPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position);
         this.units = List.of(units);
         registerUnits(owner, this.units);
-        state = States.IDLE;
+        state = PlayerState.IDLE;
     }
 
     private void registerUnits(Area owner, List<Unit> units) {
@@ -47,7 +48,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         getOwnerArea().setViewCandidate(this);
     }
 
-
     /** Unregister this player when it leaves the area */
     @Override
     public void leaveArea(){
@@ -66,21 +66,39 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     }
 
     public void startTurn() {
-        state = States.NORMAL;
+        state = PlayerState.NORMAL;
         centerCamera();
-        //unit disponible
+        setAllUnitAvailable(true);
+        //les unités redeviennent dispo ?
     }
 
-    public  void allUnitAvailable(boolean available){
-        for (Unit unit : units) {
-           unit.setAvailable(available);
-            }
+    public boolean finishedTurn() {
+        if (!unitsAreAvailable()) {
+            state = PlayerState.IDLE;
+            return true;
+        }
+        return false;
     }
+
+    public void setAllUnitAvailable(boolean available) {
+        for (Unit unit : units) {
+            unit.setAvailable(available);
+        }
+    }
+
+    private boolean unitsAreAvailable() {
+        for (Unit unit : units) {
+            if (unit.isAvailable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onLeaving(List<DiscreteCoordinates> coordinates) {
-        state = States.NORMAL;
+        state = PlayerState.NORMAL;
     }
-
 
     @Override
     public boolean takeCellSpace() { return false; }
@@ -97,10 +115,20 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     }
 
     @Override
-    public boolean wantsCellInteraction() {  return true; }
+    public boolean wantsCellInteraction() { return true; }
 
     @Override
     public boolean wantsViewInteraction() { return false; }
 
+    public enum PlayerState {
+        IDLE, NORMAL, SELECT_CELL, MOVE_UNIT, ACTION_SELECTION, ACTION;
+    }
+
+    // TODO Useful or make attribute protected ?
+    protected void setState(PlayerState state) {
+        this.state = state;
+    }
+
+    protected PlayerState getState() { return state; }
 
 }

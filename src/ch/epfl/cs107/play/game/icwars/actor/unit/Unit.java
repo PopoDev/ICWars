@@ -99,6 +99,18 @@ public abstract class Unit extends ICWarsActor {
 
     private boolean canMove(int radius) { return radius <= MOVE_RADIUS; }
 
+    @Override
+    public boolean changePosition(DiscreteCoordinates newPosition){
+        if(range.nodeExists(newPosition)) {
+            return super.changePosition(newPosition);
+        }
+        return false;
+    }
+
+    public void setAvailable(boolean available) { this.available = available; }
+
+    public boolean isAvailable() { return available; }
+
     //-------------------------//
     // Specific to a Unit type
     //-------------------------//
@@ -120,17 +132,5 @@ public abstract class Unit extends ICWarsActor {
     @Override
     public boolean isViewInteractable() {
         return false;
-    }
-
-    @Override
-    public boolean changePosition(DiscreteCoordinates newPosition){
-        if(range.nodeExists(newPosition)) {
-            return super.changePosition(newPosition);
-        }
-        return false;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
     }
 }
