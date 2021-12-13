@@ -9,6 +9,8 @@ import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
@@ -20,7 +22,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     public ICWarsPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position);
-        this.units = List.of(units);
+        this.units = new ArrayList<>(Arrays.asList(units));
         registerUnits(owner, this.units);
         state = PlayerState.IDLE;
     }
@@ -79,6 +81,15 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         return false;
     }
 
+    public void finishAction() {
+        state = PlayerState.NORMAL;
+    }
+
+    public void interruptAttackAction() {
+        centerCamera();
+        state = PlayerState.ACTION_SELECTION;
+    }
+
     public void setAllUnitAvailable(boolean available) {
         for (Unit unit : units) {
             unit.setAvailable(available);
@@ -101,6 +112,9 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         }
     }
 
+    //----------------//
+    // Interactable
+    //----------------//
     @Override
     public boolean takeCellSpace() { return false; }
 
@@ -115,21 +129,21 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         ((ICWarsInteractionVisitor)v).interactWith(this);
     }
 
+    //----------------//
+    // Interactor
+    //----------------//
     @Override
     public boolean wantsCellInteraction() { return true; }
 
     @Override
     public boolean wantsViewInteraction() { return false; }
 
-    protected enum PlayerState {
+    public enum PlayerState {
         IDLE, NORMAL, SELECT_CELL, MOVE_UNIT, ACTION_SELECTION, ACTION;
     }
 
     // TODO Useful or make attribute protected ?
-    protected void setState(PlayerState state) {
-        this.state = state;
-    }
 
-    protected PlayerState getState() { return state; }
+    public PlayerState getState() { return state; }
 
 }

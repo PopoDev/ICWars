@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -22,6 +23,7 @@ public class RealPlayer extends ICWarsPlayer {
     private final int MOVE_DURATION = 5;
 
     private ICWarsPlayerGUI playerGUI;
+    private Action actionToDo;
 
     private final ICWarsPlayerInteractionHandler handler;
 
@@ -46,9 +48,14 @@ public class RealPlayer extends ICWarsPlayer {
         if (state != PlayerState.IDLE) {
             sprite.draw(canvas);
         }
-        if (state == PlayerState.MOVE_UNIT) {
+        if (state == PlayerState.MOVE_UNIT || state == PlayerState.ACTION_SELECTION) {
             playerGUI.setDestination(getCurrentMainCellCoordinates());
+            playerGUI.setActionsPanel();
             playerGUI.draw(canvas);
+        }
+
+        if (state == PlayerState.ACTION) {
+            actionToDo.draw(canvas);
         }
     }
 
@@ -56,7 +63,7 @@ public class RealPlayer extends ICWarsPlayer {
     public void update(float deltaTime) {
         Keyboard keyboard = getOwnerArea().getKeyboard();
 
-        updateStates();
+        updateStates(deltaTime);
 
         if (state == PlayerState.MOVE_UNIT || state == PlayerState.NORMAL || state == PlayerState.SELECT_CELL) {
             moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
@@ -67,8 +74,10 @@ public class RealPlayer extends ICWarsPlayer {
         super.update(deltaTime);
     }
 
-    private void updateStates(){
+    private void updateStates(float deltaTime) {
         Keyboard keyboard = getOwnerArea().getKeyboard();
+
+        //if (isAlly()) System.out.println(state);
         switch(state) {
             case IDLE:
                 break;
@@ -87,21 +96,38 @@ public class RealPlayer extends ICWarsPlayer {
                 break;
             case MOVE_UNIT:
                 if (keyboard.get(Keyboard.ENTER).isPressed()) {
-                    moveUnit();
-                    state = PlayerState.NORMAL;
+                    if (moveUnit()) {
+                        state = PlayerState.ACTION_SELECTION;
+                    } else {
+                        state = PlayerState.NORMAL;
+                    }
                 }
                 break;
             case ACTION_SELECTION:
+                actionToDo = selectedUnit.browseActions();
+                if (actionToDo != null) {
+                    state = PlayerState.ACTION;
+                }
+                break;
             case ACTION:
+                actionToDo.doAction(deltaTime, this, keyboard);
+                break;
         }
     }
 
-    private void moveUnit() {
+    private boolean moveUnit() {
         if (selectedUnit.changePosition(getCurrentMainCellCoordinates())) {
             selectedUnit.setAvailable(false);  // No longer usable
-            selectedUnit = null;               // Reset selectedUnit
-            playerGUI.setSelectedUnit(null);
+            return true;
         }
+        return false;
+    }
+
+    @Override
+    public void finishAction() {
+        super.finishAction();
+        selectedUnit = null;  // Reset selectedUnit
+        playerGUI.setSelectedUnit(null);
     }
 
     /**
@@ -118,10 +144,11 @@ public class RealPlayer extends ICWarsPlayer {
         }
     }
 
+    //----------------//
+    // Interactor
+    //----------------//
     @Override
-    public List<DiscreteCoordinates> getFieldOfViewCells() {
-        return null;
-    }
+    public List<DiscreteCoordinates> getFieldOfViewCells() { return null; }
 
     /**
      * Ask other if it accepts interaction with RealPlayer
@@ -146,5 +173,4 @@ public class RealPlayer extends ICWarsPlayer {
             }
         }
     }
-
 }

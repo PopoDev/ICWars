@@ -3,7 +3,7 @@ package ch.epfl.cs107.play.game.icwars.area;
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
+import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.window.Window;
 
 public class ICWarsBehavior extends AreaBehavior {
@@ -69,6 +69,11 @@ public class ICWarsBehavior extends AreaBehavior {
             this.type = type;
         }
 
+        public int getDefenseStars() { return type.defenseStars; }
+
+        //----------------//
+        // AreaBehavior
+        //----------------//
         @Override
         protected boolean canLeave(Interactable entity) { return true; }
 
@@ -84,6 +89,9 @@ public class ICWarsBehavior extends AreaBehavior {
             return ! (entity.takeCellSpace() && hasEntitiesTakingCellSpace);
         }
 
+        //----------------//
+        // Interactable
+        //----------------//
         @Override
         public boolean isCellInteractable() { return true; }
 
@@ -91,7 +99,8 @@ public class ICWarsBehavior extends AreaBehavior {
         public boolean isViewInteractable() { return false; }
 
         @Override
-        public void acceptInteraction(AreaInteractionVisitor v) {}
-
+        public void acceptInteraction(AreaInteractionVisitor v) {
+            ((ICWarsInteractionVisitor)v).interactWith(this);
+        }
     }
 }

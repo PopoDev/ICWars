@@ -5,6 +5,7 @@ import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public abstract class ICWarsArea extends Area {
     private ICWarsBehavior behavior;
 
     // List of Unit inside the area
-    private final List<Unit> actorsUnit = new ArrayList<>();
+    private final List<Unit> units = new ArrayList<>();
 
     @Override
     public boolean begin(Window window, FileSystem fileSystem) {
@@ -39,11 +40,19 @@ public abstract class ICWarsArea extends Area {
     }
 
     public void registerUnit(Unit unit) {
-        actorsUnit.add(unit);
+        units.add(unit);
     }
 
     public void unregisterUnit(Unit unit) {
-        actorsUnit.remove(unit);
+        units.remove(unit);
+    }
+
+    // TODO Pas de getter sur les unités du jeu ?
+    public List<Unit> getUnits() {
+        // Copy the list so that elements cannot be added or removed from the Area,
+        // but it still contains the address to the Units
+        List<Unit> unitsCopy = new ArrayList<>(units);
+        return unitsCopy;
     }
 
     public abstract DiscreteCoordinates getPlayerSpawnPosition();
