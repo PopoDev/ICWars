@@ -97,27 +97,8 @@ public abstract class Unit extends ICWarsActor implements Interactor {
      */
     public void attack(Unit other) { other.takeDamage(this.getDamage()); }
 
-    public int[] attackAction(int listIndex) {
-        List<Integer> attackableUnitsIndex = getAttackableUnits();
-        if (attackableUnitsIndex.isEmpty()) { return new int[] {-1, listIndex}; }  // The list is empty
-
-        Keyboard keyboard = getOwnerArea().getKeyboard();
-        if (keyboard.get(Keyboard.LEFT).isPressed())  { --listIndex; }
-        if (keyboard.get(Keyboard.RIGHT).isPressed()) { ++listIndex; }
-        listIndex = Math.floorMod(listIndex, attackableUnitsIndex.size());
-
-        return new int[] {attackableUnitsIndex.get(listIndex), listIndex};
-    }
-
-    private List<Integer> getAttackableUnits() {
-        List<Unit> units = ((ICWarsArea)getOwnerArea()).getUnits();
-        List<Integer> attackableUnitsIndex = new ArrayList<>();
-        for (Unit unit : units) {
-            if (range.nodeExists(unit.getCurrentMainCellCoordinates()) && !areInSameFaction(this, unit)) {
-                attackableUnitsIndex.add(units.indexOf(unit));
-            }
-        }
-        return attackableUnitsIndex;
+    public boolean canAttack(Unit attacked) {
+        return range.nodeExists(attacked.getCurrentMainCellCoordinates()) && !areInSameFaction(this, attacked);
     }
 
     /**

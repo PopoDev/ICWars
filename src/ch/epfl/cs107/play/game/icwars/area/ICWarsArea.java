@@ -47,12 +47,30 @@ public abstract class ICWarsArea extends Area {
         units.remove(unit);
     }
 
-    // TODO Pas de getter sur les unités du jeu ?
-    public List<Unit> getUnits() {
-        // Copy the list so that elements cannot be added or removed from the Area,
-        // but it still contains the address to the Units
-        List<Unit> unitsCopy = new ArrayList<>(units);
-        return unitsCopy;
+    public int[] attackSelection(Unit attacker, int listIndex) {
+        List<Integer> attackableUnitsIndex = getUnitsIndex(attacker);
+        if (attackableUnitsIndex.isEmpty()) { return new int[] {-1, listIndex}; }  // The list is empty
+
+        Keyboard keyboard = getKeyboard();
+        if (keyboard.get(Keyboard.LEFT).isPressed())  { --listIndex; }
+        if (keyboard.get(Keyboard.RIGHT).isPressed()) { ++listIndex; }
+        listIndex = Math.floorMod(listIndex, attackableUnitsIndex.size());
+
+        return new int[] {attackableUnitsIndex.get(listIndex), listIndex};
+    }
+
+    public Unit getUnitFromIndex(int index) {
+        return units.get(index);
+    }
+
+    private List<Integer> getUnitsIndex(Unit attacker) {
+        List<Integer> attackableUnitsIndex = new ArrayList<>();
+        for (Unit unit : units) {
+            if (attacker.canAttack(unit)) {
+                attackableUnitsIndex.add(units.indexOf(unit));
+            }
+        }
+        return attackableUnitsIndex;
     }
 
     public abstract DiscreteCoordinates getPlayerSpawnPosition();

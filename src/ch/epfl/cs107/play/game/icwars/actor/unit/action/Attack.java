@@ -25,35 +25,19 @@ public class Attack extends Action {
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
-        /*
-        List<Unit> attackableUnits = new ArrayList<>();
-        for (int index : linkedUnit.getAttackableUnits()) {
-            ICWarsArea icWarsArea = ((ICWarsArea)area);
-            attackableUnits.add((icWarsArea.getUnits().get(index)));
-        }
-
-        if (attackableUnits.isEmpty()) { return; }
-
-        if (keyboard.get(Keyboard.LEFT).isPressed())  { --attackedIndex; }
-        if (keyboard.get(Keyboard.RIGHT).isPressed()) { ++attackedIndex; }
-        attackedIndex = Math.floorMod(attackedIndex, attackableUnits.size());
-
-        attackedUnit = attackableUnits.get(attackedIndex);
-        */
-        int[] actionValues = linkedUnit.attackAction(listIndex);
+        int[] actionValues = ((ICWarsArea)area).attackSelection(linkedUnit, listIndex);
         int attackedIndex = actionValues[0];
+        listIndex = actionValues[1];
 
         // The list of enemy units is empty or the key TAB is pressed
         if (attackedIndex < 0 || keyboard.get(Keyboard.TAB).isPressed()) {
             player.interruptAttackAction();
             return;
         }
-        listIndex = actionValues[1];
-        attackedUnit = ((ICWarsArea)area).getUnits().get(attackedIndex);
+        attackedUnit = ((ICWarsArea)area).getUnitFromIndex(attackedIndex);
 
         if (keyboard.get(Keyboard.ENTER).isPressed()) {
             linkedUnit.attack(attackedUnit);
-            System.out.println("BOOM " + attackedUnit.getHp());
 
             linkedUnit.setAvailable(false);
             player.centerCamera();
