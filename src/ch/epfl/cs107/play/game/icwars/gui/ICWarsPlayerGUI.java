@@ -16,11 +16,13 @@ public class ICWarsPlayerGUI implements Graphics {
 
     public static final float FONT_SIZE = 20.f;
     private final ICWarsActionsPanel actionsPanel;
+    private final ICWarsInfoPanel infoPanel;
 
     public ICWarsPlayerGUI(float cameraScaleFactor, ICWarsPlayer player) {
         this.player = (RealPlayer) player;
 
         actionsPanel = new ICWarsActionsPanel(cameraScaleFactor);
+        infoPanel = new ICWarsInfoPanel(cameraScaleFactor);
     }
 
     public void setSelectedUnit(Unit unit) {
@@ -29,19 +31,26 @@ public class ICWarsPlayerGUI implements Graphics {
 
     public void setDestination(DiscreteCoordinates destination) { this.destination = destination; }
 
-    public void setActionsPanel() {
-        actionsPanel.setActions(selectedUnit.getActions());
-    }
+    public ICWarsActionsPanel getActionsPanel() { return actionsPanel; }
+
+    public ICWarsInfoPanel getInfoPanel() { return infoPanel; }
 
     @Override
     public void draw(Canvas canvas) {
+        ICWarsPlayer.PlayerState state = player.getState();
+
         if (selectedUnit != null) {
-            if (player.getState() == ICWarsPlayer.PlayerState.ACTION_SELECTION) {
-                actionsPanel.draw(canvas);
-            } else {
+            if (state == ICWarsPlayer.PlayerState.MOVE_UNIT) {
                 selectedUnit.drawRangeAndPathTo(destination, canvas);
             }
+            if (state == ICWarsPlayer.PlayerState.ACTION_SELECTION) {
+                actionsPanel.draw(canvas);
+            }
         }
+        if (state == ICWarsPlayer.PlayerState.NORMAL || state == ICWarsPlayer.PlayerState.SELECT_CELL) {
+            infoPanel.draw(canvas);
+        }
+
     }
 
 }

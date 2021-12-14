@@ -5,7 +5,6 @@ import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
-import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsRange;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
@@ -50,7 +49,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         handler = new UnitInteractionHandler();
     }
 
-    private String getName() { return name; }
+    public String getName() { return name; }
 
     public Unit setName(String name) {
         this.name = name;
@@ -165,7 +164,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     //-------------------------//
     // Specific to a Unit type
     //-------------------------//
-    protected abstract int getDamage();
+    public abstract int getDamage();
 
     protected void initActions(Action... actions) {
         this.actions.addAll(List.of(actions));
@@ -225,7 +224,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     private class UnitInteractionHandler implements ICWarsInteractionVisitor {
         @Override
         public void interactWith(ICWarsBehavior.ICWarsCell cell) {
-            defenseStars = cell.getDefenseStars();
+            defenseStars = cell.getType().getDefenseStar();
         }
     }
 }

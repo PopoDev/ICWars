@@ -49,6 +49,13 @@ public class ICWarsBehavior extends AreaBehavior {
             }
             return NONE;
         }
+
+        public int getDefenseStar() { return defenseStars; }
+
+        public String typeToString() {
+            String str = toString();
+            return str.charAt(0) + str.substring(1).toLowerCase();
+        }
     }
 
     /** Cell adapted to the ICWars game */
@@ -69,7 +76,7 @@ public class ICWarsBehavior extends AreaBehavior {
             this.type = type;
         }
 
-        public int getDefenseStars() { return type.defenseStars; }
+        public ICWarsCellType getType() { return type; }
 
         //----------------//
         // AreaBehavior

@@ -19,6 +19,6 @@ public class Soldier extends Unit {
     }
 
     @Override
-    protected int getDamage() { return DAMAGE; }
+    public int getDamage() { return DAMAGE; }
 
 }

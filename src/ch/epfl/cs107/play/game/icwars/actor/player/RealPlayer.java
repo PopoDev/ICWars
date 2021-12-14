@@ -7,6 +7,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
+import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -48,11 +49,13 @@ public class RealPlayer extends ICWarsPlayer {
         if (state != PlayerState.IDLE) {
             sprite.draw(canvas);
         }
-        if (state == PlayerState.MOVE_UNIT || state == PlayerState.ACTION_SELECTION) {
+        if (state == PlayerState.MOVE_UNIT) {
             playerGUI.setDestination(getCurrentMainCellCoordinates());
-            playerGUI.setActionsPanel();
-            playerGUI.draw(canvas);
         }
+        if (state == PlayerState.ACTION_SELECTION) {
+            playerGUI.getActionsPanel().setActions(selectedUnit.getActions());
+        }
+        playerGUI.draw(canvas);
 
         if (state == PlayerState.ACTION) {
             actionToDo.draw(canvas);
@@ -116,18 +119,13 @@ public class RealPlayer extends ICWarsPlayer {
     }
 
     private boolean moveUnit() {
-        if (selectedUnit.changePosition(getCurrentMainCellCoordinates())) {
-            selectedUnit.setAvailable(false);  // No longer usable
-            return true;
-        }
-        return false;
+        return selectedUnit.changePosition(getCurrentMainCellCoordinates());
     }
 
     @Override
     public void finishAction() {
         super.finishAction();
-        selectedUnit = null;  // Reset selectedUnit
-        playerGUI.setSelectedUnit(null);
+        selectedUnit.setAvailable(false);  // No longer usable
     }
 
     /**
@@ -157,13 +155,13 @@ public class RealPlayer extends ICWarsPlayer {
      */
     @Override
     public void interactWith(Interactable other) {
-        if (state == PlayerState.SELECT_CELL) { other.acceptInteraction(handler); }
+        other.acceptInteraction(handler);
     }
 
     private class ICWarsPlayerInteractionHandler implements ICWarsInteractionVisitor {
         @Override
         public void interactWith(Unit unit) {
-            if((state == PlayerState.SELECT_CELL) && (areInSameFaction(RealPlayer.this, unit))) {
+            if ((state == PlayerState.SELECT_CELL) && (areInSameFaction(RealPlayer.this, unit))) {
                 if (!unit.isAvailable()) {
                     state = PlayerState.NORMAL;
                     return;
@@ -171,6 +169,12 @@ public class RealPlayer extends ICWarsPlayer {
                 selectedUnit = unit;
                 playerGUI.setSelectedUnit(selectedUnit);
             }
+            playerGUI.getInfoPanel().setUnit(unit);
+        }
+
+        @Override
+        public void interactWith(ICWarsBehavior.ICWarsCell cell) {
+            playerGUI.getInfoPanel().setCurrentCell(cell.getType());
         }
     }
 }

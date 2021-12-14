@@ -124,8 +124,8 @@ public class ICWars extends AreaGame {
 
         // Player 1 (Ally)
         RealPlayer player = new RealPlayer(ICWarsActor.Faction.ALLY, area, area.getPlayerSpawnPosition(),
-                new Tank(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 5)).setName("Tank_A1"),
-                new Soldier(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(3, 5)).setName("Soldier_A1"));
+                new Tank(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 5)).setName("[A] T1"),
+                new Soldier(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(3, 5)).setName("[A] S1"));
 
         players.add(player);
         player.enterArea(area, area.getPlayerSpawnPosition());
@@ -133,8 +133,8 @@ public class ICWars extends AreaGame {
 
         // Player 2 (Enemy)
         RealPlayer enemyPlayer = new RealPlayer(ICWarsActor.Faction.ENEMY, area, area.getEnemySpawnPosition(),
-                new Tank(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(8, 5)).setName("Tank_E1"),
-                new Soldier(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(9, 5)).setName("Soldier_E1"));
+                new Tank(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(8, 5)).setName("[E] T1"),
+                new Soldier(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(9, 5)).setName("[E] S1"));
 
         players.add(enemyPlayer);
         enemyPlayer.enterArea(area, area.getEnemySpawnPosition());
