@@ -21,4 +21,8 @@ public class Soldier extends Unit {
     @Override
     public int getDamage() { return DAMAGE; }
 
+    @Override
+    public String toString() {
+        return "Soldier" + super.toString();
+    }
 }

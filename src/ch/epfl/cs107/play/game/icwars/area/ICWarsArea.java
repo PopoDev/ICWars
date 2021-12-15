@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class ICWarsArea extends Area {
@@ -16,11 +17,18 @@ public abstract class ICWarsArea extends Area {
     private ICWarsBehavior behavior;
 
     // List of Unit inside the area
-    private final List<Unit> units = new ArrayList<>();
+    private List<Unit> units;
+    // List of Units we want to register/unregistered from the area for next update iteration
+    private List<Unit> registeredUnits;
+    private List<Unit> unregisteredUnits;
 
     @Override
     public boolean begin(Window window, FileSystem fileSystem) {
         if (super.begin(window, fileSystem)) {
+            units = new LinkedList<>();
+            registeredUnits = new LinkedList<>();
+            unregisteredUnits = new LinkedList<>();
+
             // Set the behavior map
             behavior = new ICWarsBehavior(window, getTitle());
             setBehavior(behavior);
@@ -30,21 +38,39 @@ public abstract class ICWarsArea extends Area {
         return false;
     }
 
+    @Override
+    public void update(float deltaTime) {
+        purgeRegistrationUnits();
+        super.update(deltaTime);
+    }
+
     /** Create the area by adding it all actors called by begin method */
     protected abstract void createArea();
 
-    public void registerUnits(List<Unit> units) {
-        for (Unit unit : units) {
-            registerUnit(unit);
-        }
-    }
-
+    /**
+     * Register a unit : will be added at next update
+     * @param unit (Unit): the unit to register, not null
+     */
     public void registerUnit(Unit unit) {
-        units.add(unit);
+        registeredUnits.add(unit);
     }
 
+    /**
+     * Unregister a unit : will be removed at next update
+     * @param unit (Unit): the unit to unregister, not null
+     */
     public void unregisterUnit(Unit unit) {
-        units.remove(unit);
+        unregisteredUnits.add(unit);
+    }
+
+    final void purgeRegistrationUnits() {
+        // Register Units
+        units.addAll(registeredUnits);
+        registeredUnits.clear();
+
+        // Unregister Units
+        units.removeAll(unregisteredUnits);
+        unregisteredUnits.clear();
     }
 
     public int[] attackSelection(Unit attacker, int listIndex) {

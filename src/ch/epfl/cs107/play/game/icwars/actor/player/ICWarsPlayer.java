@@ -9,12 +9,13 @@ import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
+    // List of Units the player has
     private final List<Unit> units;
     protected Unit selectedUnit;
 
@@ -22,7 +23,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     public ICWarsPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position);
-        this.units = new ArrayList<>(Arrays.asList(units));
+        this.units = new LinkedList<>(Arrays.asList(units));
         registerUnits(owner, this.units);
         state = PlayerState.IDLE;
     }
@@ -30,19 +31,24 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     private void registerUnits(Area owner, List<Unit> units) {
         for (Unit unit : units) {
             owner.registerActor(unit);
+            ((ICWarsArea)owner).registerUnit(unit);
         }
-        ((ICWarsArea)owner).registerUnits(units);
     }
 
     private void unregisterUnits(Area owner, List<Unit> units, boolean becauseDestroyed) {
         for (Unit unit : units) {
             if (becauseDestroyed) {
-                if (!unit.isDead()) { return; }
-                units.remove(unit);
+                if (!unit.isDead()) { continue; }
+                unregisterUnit(unit);
             }
             owner.unregisterActor(unit);
             ((ICWarsArea)owner).unregisterUnit(unit);
         }
+    }
+
+    /** Unregister a unit : it is removed from the player list */
+    public void unregisterUnit(Unit unit) {
+        units.remove(unit);
     }
 
     /** Center the camera on the player */

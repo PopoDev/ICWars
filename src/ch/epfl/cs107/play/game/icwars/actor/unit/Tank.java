@@ -21,4 +21,8 @@ public class Tank extends Unit {
     @Override
     public int getDamage() { return DAMAGE; }
 
+    @Override
+    public String toString() {
+        return "Tank" + super.toString();
+    }
 }

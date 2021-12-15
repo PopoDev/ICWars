@@ -28,13 +28,13 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     private boolean available;
 
     private final UnitInteractionHandler handler;
-    private final List<Action> actions = new ArrayList<>();
+    private final List<Action> actions;
     private int defenseStars;
 
     private ICWarsRange range;
 
     public Unit(ICWarsActor.Faction faction, Area owner, DiscreteCoordinates position,
-                int hpMax, int moveRadius, String[] spriteNames, Action... actions) {
+                int hpMax, int moveRadius, String[] spriteNames) {
         super(faction, owner, position);
 
         this.HP_MAX = hpMax;
@@ -46,6 +46,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
 
         range = setRange(position);
 
+        actions = new ArrayList<>();
         handler = new UnitInteractionHandler();
     }
 
@@ -58,11 +59,14 @@ public abstract class Unit extends ICWarsActor implements Interactor {
 
     public int getHp() { return hp; }
 
-    public boolean isDead() { return hp <= 0; }
+    public boolean isDead() {
+        //System.out.println(this + "" + (hp <= 0));
+        return hp <= 0;
+    }
 
     @Override
-    public void draw(Canvas canvas) {
-        sprite.draw(canvas);
+    public String toString() {
+        return " {" + "name='" + name + '\'' + ", hp=" + hp + "}";
     }
 
     /** Center the camera on the unit */
@@ -100,6 +104,11 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         return range.nodeExists(attacked.getCurrentMainCellCoordinates()) && !areInSameFaction(this, attacked);
     }
 
+    @Override
+    public void draw(Canvas canvas) {
+        sprite.draw(canvas);
+    }
+
     /**
      * Draw the unit's range and a path from the unit position to destination
      * @param destination path destination
@@ -113,8 +122,6 @@ public abstract class Unit extends ICWarsActor implements Interactor {
             new Path(getCurrentMainCellCoordinates().toVector(), path).draw(canvas);
         }
     }
-
-    private boolean canMove(int radius) { return radius <= MOVE_RADIUS; }
 
     @Override
     public boolean changePosition(DiscreteCoordinates newPosition) {
@@ -167,7 +174,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     public abstract int getDamage();
 
     protected void initActions(Action... actions) {
-        this.actions.addAll(List.of(actions));
+        this.actions.addAll(List.of(actions));  // Immutable List
     }
 
     public List<Action> getActions() {

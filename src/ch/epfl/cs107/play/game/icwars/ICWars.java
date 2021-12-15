@@ -71,8 +71,9 @@ public class ICWars extends AreaGame {
             case END_PLAYER_TURN :
                 if (isPlayerDefeated(currentlyActivePlayer)) {
                     removePlayerDefeated(currentlyActivePlayer);
+                    currentlyActivePlayer = null;
                 } else {
-                    waitingNextRound.add(currentlyActivePlayer);
+                    if (currentlyActivePlayer != null) { waitingNextRound.add(currentlyActivePlayer); }
                     gameState = GameState.CHOOSE_PLAYER;
                 }
                 break;
@@ -150,12 +151,12 @@ public class ICWars extends AreaGame {
         if (areaIndex < areas.length - 1) {
             System.out.println("Next level");
             gameState = GameState.INIT;
-            clearPlayers();
 
             // Clean the registered actors
             for (ICWarsPlayer player : players) {
                 player.leaveArea();
             }
+            clearPlayers();
 
             ++areaIndex;
             initArea(areas[areaIndex]);
@@ -173,24 +174,26 @@ public class ICWars extends AreaGame {
     private void reset() {
         System.out.println("Reset");
         gameState = GameState.INIT;
-        clearPlayers();
 
         // Clean the registered actors
         for (ICWarsPlayer player : players) {
             player.leaveArea();
         }
+        clearPlayers();
 
         areaIndex = 0;
         initArea(areas[areaIndex]);
     }
 
     private boolean isPlayerDefeated(ICWarsPlayer player) {
+        if (player == null) { return false; }
         return player.isDefeated();
     }
 
     private void removePlayerDefeated(ICWarsPlayer player) {
-        waitingNextRound.remove(player);
         player.leaveArea();  // Unregister the player from the game
+        waitingNextRound.remove(player);
+        players.remove(player);
     }
 
     private void clearPlayers() {

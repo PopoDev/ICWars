@@ -23,7 +23,7 @@ public class RealPlayer extends ICWarsPlayer {
 
     private final int MOVE_DURATION = 5;
 
-    private ICWarsPlayerGUI playerGUI;
+    private final ICWarsPlayerGUI playerGUI;
     private Action actionToDo;
 
     private final ICWarsPlayerInteractionHandler handler;
@@ -48,14 +48,8 @@ public class RealPlayer extends ICWarsPlayer {
     public void draw(Canvas canvas) {
         if (state != PlayerState.IDLE) {
             sprite.draw(canvas);
+            playerGUI.draw(canvas);
         }
-        if (state == PlayerState.MOVE_UNIT) {
-            playerGUI.setDestination(getCurrentMainCellCoordinates());
-        }
-        if (state == PlayerState.ACTION_SELECTION) {
-            playerGUI.getActionsPanel().setActions(selectedUnit.getActions());
-        }
-        playerGUI.draw(canvas);
 
         if (state == PlayerState.ACTION) {
             actionToDo.draw(canvas);
@@ -74,13 +68,20 @@ public class RealPlayer extends ICWarsPlayer {
             moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
             moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
         }
+
+        if (state == PlayerState.MOVE_UNIT) {
+            playerGUI.setDestination(getCurrentMainCellCoordinates());
+        }
+        if (state == PlayerState.ACTION_SELECTION) {
+            playerGUI.getActionsPanel().setActions(selectedUnit.getActions());
+        }
+
         super.update(deltaTime);
     }
 
     private void updateStates(float deltaTime) {
         Keyboard keyboard = getOwnerArea().getKeyboard();
 
-        //if (isAlly()) System.out.println(state);
         switch(state) {
             case IDLE:
                 break;
@@ -126,6 +127,14 @@ public class RealPlayer extends ICWarsPlayer {
     public void finishAction() {
         super.finishAction();
         selectedUnit.setAvailable(false);  // No longer usable
+        selectedUnit = null;  // Reset selectedUnit
+        playerGUI.setSelectedUnit(null);
+    }
+
+    @Override
+    public void onLeaving(List<DiscreteCoordinates> coordinates) {
+        super.onLeaving(coordinates);
+        playerGUI.getInfoPanel().setUnit(null);
     }
 
     /**
@@ -169,7 +178,9 @@ public class RealPlayer extends ICWarsPlayer {
                 selectedUnit = unit;
                 playerGUI.setSelectedUnit(selectedUnit);
             }
-            playerGUI.getInfoPanel().setUnit(unit);
+            if (!isDisplacementOccurs()) {
+                playerGUI.getInfoPanel().setUnit(unit);
+            }
         }
 
         @Override
