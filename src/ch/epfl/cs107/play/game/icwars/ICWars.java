@@ -4,6 +4,7 @@ import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Medic;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Soldier;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Tank;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
@@ -65,6 +66,7 @@ public class ICWars extends AreaGame {
                 break;
             case PLAYER_TURN :
                 if (currentlyActivePlayer.finishedTurn() || keyboard.get(Keyboard.TAB).isPressed()) {
+                    currentlyActivePlayer.finishTurn();
                     gameState = GameState.END_PLAYER_TURN;
                 }
                 break;
@@ -88,6 +90,7 @@ public class ICWars extends AreaGame {
                 } else {
                     waitingCurrentRound.addAll(waitingNextRound);
                     waitingNextRound.clear();
+                    addMoneyEachTurn(MONEY_EACH_TURN);
                     gameState = GameState.CHOOSE_PLAYER;
                 }
                 break;
@@ -126,7 +129,8 @@ public class ICWars extends AreaGame {
         // Player 1 (Ally)
         RealPlayer player = new RealPlayer(ICWarsActor.Faction.ALLY, area, area.getPlayerSpawnPosition(),
                 new Tank(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 5)).setName("[A] T1"),
-                new Soldier(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(3, 5)).setName("[A] S1"));
+                new Soldier(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(3, 5)).setName("[A] S1"),
+                new Medic(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(1, 5)).setName("[A] M1"));
 
         players.add(player);
         player.enterArea(area, area.getPlayerSpawnPosition());
@@ -207,6 +211,19 @@ public class ICWars extends AreaGame {
         INIT, CHOOSE_PLAYER,
         START_PLAYER_TURN, PLAYER_TURN, END_PLAYER_TURN,
         END_TURN, END
+    }
+
+    //----------------//
+    // Extension
+    //----------------//
+    private final int MONEY_EACH_TURN = 100;
+
+    private void addMoneyEachTurn(int amount) {
+        for (ICWarsPlayer player : players) {
+            if (player instanceof RealPlayer) {  // Only for real player for now
+                ((RealPlayer) player).addMoney(amount);
+            }
+        }
     }
 
 }

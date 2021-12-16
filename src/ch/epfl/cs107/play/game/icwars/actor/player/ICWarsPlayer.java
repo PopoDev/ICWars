@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.window.Keyboard;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -80,11 +81,11 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     }
 
     public boolean finishedTurn() {
-        if (!unitsAreAvailable()) {
-            state = PlayerState.IDLE;
-            return true;
-        }
-        return false;
+        return !unitsAreAvailable();
+    }
+
+    public void finishTurn() {
+        state = PlayerState.IDLE;
     }
 
     public void finishAction() {

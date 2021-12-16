@@ -17,12 +17,14 @@ public class ICWarsPlayerGUI implements Graphics {
     public static final float FONT_SIZE = 20.f;
     private final ICWarsActionsPanel actionsPanel;
     private final ICWarsInfoPanel infoPanel;
+    private final ICWarsGamePanel gamePanel;
 
     public ICWarsPlayerGUI(float cameraScaleFactor, ICWarsPlayer player) {
         this.player = (RealPlayer) player;
 
         actionsPanel = new ICWarsActionsPanel(cameraScaleFactor);
         infoPanel = new ICWarsInfoPanel(cameraScaleFactor);
+        gamePanel = new ICWarsGamePanel(cameraScaleFactor);
     }
 
     public void setSelectedUnit(Unit unit) {
@@ -34,6 +36,8 @@ public class ICWarsPlayerGUI implements Graphics {
     public ICWarsActionsPanel getActionsPanel() { return actionsPanel; }
 
     public ICWarsInfoPanel getInfoPanel() { return infoPanel; }
+
+    public ICWarsGamePanel getGamePanel() { return gamePanel; }
 
     @Override
     public void draw(Canvas canvas) {
@@ -50,6 +54,8 @@ public class ICWarsPlayerGUI implements Graphics {
         if (state == ICWarsPlayer.PlayerState.NORMAL || state == ICWarsPlayer.PlayerState.SELECT_CELL) {
             infoPanel.draw(canvas);
         }
+
+        gamePanel.draw(canvas);
 
     }
 

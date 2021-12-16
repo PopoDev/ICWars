@@ -9,6 +9,9 @@ public class Level0 extends ICWarsArea {
     public String getTitle() { return "icwars/Level0"; }
 
     @Override
+    public String toString() { return getClass().getSimpleName(); }
+
+    @Override
     protected void createArea() {
         registerActor(new Background(this)) ;
     }
