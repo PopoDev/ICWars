@@ -22,8 +22,14 @@ public class Medic extends Unit {
     }
 
     /**
-     * Return the amount the Medic can heal
+     * Return whether the Medic can heal this unit.
+     * A Medic can't heal himself and enemy units
      */
+    public boolean canHeal(Unit unit) {
+        return unit != this && areInSameFaction(this, unit);
+    }
+
+    /** Return the amount the Medic can heal */
     @Override
     public int getDamage() { return HEAL; }
 

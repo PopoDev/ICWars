@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Medic;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.window.Canvas;
@@ -21,7 +22,7 @@ public class Heal extends Action {
     }
 
     private void healUnitsAround() {
-        for (int index : ((ICWarsArea)area).getUnitsToHeal(linkedUnit)) {
+        for (int index : ((ICWarsArea)area).getUnitsToHeal((Medic) linkedUnit)) {
             Unit healedUnit = ((ICWarsArea) area).getUnitFromIndex(index);
             healedUnit.repair(healAmount);
         }

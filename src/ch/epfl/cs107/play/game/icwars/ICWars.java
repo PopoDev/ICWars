@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Medic;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Rocket;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Soldier;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Tank;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
@@ -129,9 +130,10 @@ public class ICWars extends AreaGame {
 
         // Player 1 (Ally)
         RealPlayer player = new RealPlayer(ICWarsActor.Faction.ALLY, area, area.getPlayerSpawnPosition(),
-                new Tank(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 5)).setName("[A] T1"),
+                new Tank(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(3, 4)).setName("[A] T1"),
                 new Soldier(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(3, 5)).setName("[A] S1"),
-                new Medic(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(1, 5)).setName("[A] M1"));
+                new Medic(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 5)).setName("[A] M1"),
+                new Rocket(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 4)).setName("[A] R1"));
 
         players.add(player);
         player.enterArea(area, area.getPlayerSpawnPosition());

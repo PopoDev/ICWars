@@ -149,6 +149,12 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         }
     }
 
+    public enum PlayerState {
+        IDLE, NORMAL, SELECT_CELL, MOVE_UNIT, ACTION_SELECTION, ACTION;
+    }
+
+    public PlayerState getState() { return state; }
+
     //----------------//
     // Interactable
     //----------------//
@@ -174,11 +180,5 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     @Override
     public boolean wantsViewInteraction() { return false; }
-
-    public enum PlayerState {
-        IDLE, NORMAL, SELECT_CELL, MOVE_UNIT, ACTION_SELECTION, ACTION;
-    }
-
-    public PlayerState getState() { return state; }
 
 }

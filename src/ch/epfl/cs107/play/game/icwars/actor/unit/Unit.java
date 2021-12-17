@@ -119,6 +119,10 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         return range.nodeExists(unit.getCurrentMainCellCoordinates());
     }
 
+    public boolean isNextTo(Unit unit) {
+        return this.getCurrentMainCellCoordinates().getNeighbours().contains(unit.getCurrentMainCellCoordinates());
+    }
+
     @Override
     public void draw(Canvas canvas) {
         sprite.draw(canvas);
@@ -264,10 +268,6 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     private final HealthLostBarGraphics hpLostBar;
     private final float barWidth = ICWars.CAMERA_SCALE_FACTOR / 12;
     private final float barHeight = ICWars.CAMERA_SCALE_FACTOR / 60;
-
-    public boolean canHeal(Unit unit) {
-        return canReach(unit) && areInSameFaction(this, unit);
-    }
 
     private void changeHpBar() {
         float width = barWidth * ((float)hp / (float)HP_MAX);

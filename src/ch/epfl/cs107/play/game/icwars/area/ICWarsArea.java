@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars.area;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.ICWars;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Medic;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -124,13 +125,23 @@ public abstract class ICWarsArea extends Area {
     //----------------//
     // Extension
     //----------------//
-    public List<Integer> getUnitsToHeal(Unit selectedUnit) {
+    public List<Integer> getNeighbourUnits(Unit selectedUnit) {
         List<Integer> unitsAroundIndex = new ArrayList<>();
         for (Unit unit : units) {
-            if (selectedUnit.canHeal(unit)) {
+            if (selectedUnit.isNextTo(unit)) {
                 unitsAroundIndex.add(units.indexOf(unit));
             }
         }
         return unitsAroundIndex;
+    }
+
+    public List<Integer> getUnitsToHeal(Medic selectedUnit) {
+        List<Integer> unitsToHealIndex = new ArrayList<>();
+        for (int index : getNeighbourUnits(selectedUnit)) {
+            if (selectedUnit.canHeal(getUnitFromIndex(index))) {
+                unitsToHealIndex.add(index);
+            }
+        }
+        return unitsToHealIndex;
     }
 }
