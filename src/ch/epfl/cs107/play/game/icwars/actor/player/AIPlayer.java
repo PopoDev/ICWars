@@ -20,9 +20,8 @@ public class AIPlayer extends ICWarsPlayer {
 
     private final ICWarsAIPlayerInteractionHandler handler;
 
-    private int counter;
-    private boolean counting;
-    private DiscreteCoordinates FinalDestination;
+    private int counter = 0;
+    private boolean counting = true;
     private RealPlayer enemy;
     private DiscreteCoordinates[] enemyUnitPosition;
 
@@ -162,17 +161,18 @@ public class AIPlayer extends ICWarsPlayer {
             }
         }
 
-        if((Math.abs(EnemyUnitPositionY - y)) <= selectedUnit.getRange()) {
-            yFromPosition = EnemyUnitPositionY - y;
+        if((Math.abs(enemyPosition.y - y)) <= selectedUnit.getRange()) {
+            offSet = offSet.add(new Vector(0,enemyPosition.y - y));
         } else {
-            if((EnemyUnitPositionY - y) < 0) {
-                yFromPosition = -(selectedUnit.getRange());
+            if((enemyPosition.y - y) < 0) {
+                offSet = offSet.add(new Vector(0,-selectedUnit.getRange()));
             } else {
-                yFromPosition = selectedUnit.getRange();
-            }
+                offSet = offSet.add(new Vector(0,selectedUnit.getRange()));            }
         }
-        FinalDestination = new DiscreteCoordinates((x + xFromPosition), (y + yFromPosition));
-        changePosition(FinalDestination);
+        DiscreteCoordinates finalDestination = coordinates.jump(offSet);
+        selectedUnit.changePosition(finalDestination);
+
+        selectedUnit.setAvailable(false);  // No longer usable
     }
 
     /**
