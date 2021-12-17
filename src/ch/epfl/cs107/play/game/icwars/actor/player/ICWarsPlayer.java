@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     // List of Units the player has
-    protected final List<Unit> units;
+    private final List<Unit> units;
     protected final List<Unit> unregisteredUnits;;
     protected Unit selectedUnit;
 
@@ -120,6 +121,14 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns a defensive copy of the list so that elements cannot be added or removed from it,
+     * but it still contains the address to the Units
+     */
+    protected List<Unit> getPlayerUnits() {
+        return new ArrayList<>(units);
     }
 
     public DiscreteCoordinates[] getUnitCoordinates(){

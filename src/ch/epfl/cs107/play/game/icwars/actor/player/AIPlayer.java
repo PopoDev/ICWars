@@ -65,7 +65,7 @@ public class AIPlayer extends ICWarsPlayer {
                 break;
             case NORMAL:
                 enemyUnitPosition = enemy.getUnitCoordinates();
-                for(Unit unit : units) {
+                for(Unit unit : getPlayerUnits()) {
                     if(unit.isAvailable()) {
                         moveTo(unit);
                     }

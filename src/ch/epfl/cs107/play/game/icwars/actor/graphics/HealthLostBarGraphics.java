@@ -6,7 +6,9 @@ import ch.epfl.cs107.play.math.Shape;
 
 import java.awt.Color;
 
-
+//----------------//
+// Extension
+//----------------//
 public class HealthLostBarGraphics extends HealthBarGraphics {
 
     private final float totalWidth;
