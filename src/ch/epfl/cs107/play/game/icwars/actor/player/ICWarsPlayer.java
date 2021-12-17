@@ -8,7 +8,6 @@ import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.window.Keyboard;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -18,7 +17,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     // List of Units the player has
     protected final List<Unit> units;
-    protected List<Unit> InRangeUnits;
+    protected final List<Unit> unregisteredUnits;;
     protected Unit selectedUnit;
 
     protected PlayerState state;
@@ -26,7 +25,10 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     public ICWarsPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position);
         this.units = new LinkedList<>(Arrays.asList(units));
+
         registerUnits(owner, this.units);
+        unregisteredUnits = new LinkedList<>();
+
         state = PlayerState.IDLE;
     }
 
@@ -50,7 +52,13 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     /** Unregister a unit : it is removed from the player list */
     public void unregisterUnit(Unit unit) {
-        units.remove(unit);
+        unregisteredUnits.add(unit);
+    }
+
+    final void purgeRegistrationUnits() {
+        // Unregister Units
+        units.removeAll(unregisteredUnits);
+        unregisteredUnits.clear();
     }
 
     /** Center the camera on the player */
@@ -71,6 +79,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     @Override
     public void update(float deltaTime) {
         unregisterUnits(getOwnerArea(), units, true);
+        purgeRegistrationUnits();
 
         super.update(deltaTime);
     }

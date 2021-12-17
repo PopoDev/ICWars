@@ -5,6 +5,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.Attack;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
@@ -48,12 +49,6 @@ public class AIPlayer extends ICWarsPlayer {
         if (state != PlayerState.IDLE) {
             sprite.draw(canvas);
         }
-        /*
-        if (state == PlayerState.ACTION) {
-            actionToDo.draw(canvas);
-        }
-
-         */
     }
 
     @Override
@@ -84,16 +79,24 @@ public class AIPlayer extends ICWarsPlayer {
                 state = PlayerState.ACTION;
                 break;
             case ACTION:
-                System.out.println(selectedUnit);
-                actionToDo = selectedUnit.getActions().get(0);
-                if(actionToDo.doAutoAction(this)) {
-                    actionToDo.doAutoAction(this);
-                } else {
-                    actionToDo = selectedUnit.getActions().get(1);
-                    actionToDo.doAutoAction(this);
+                Action attack = null;
+                Action wait = null;
+                for (Action action : selectedUnit.getActions()) {
+                    if (action instanceof Attack) {
+                        attack = action;
+                    } else {
+                        wait = action;
+                    }
                 }
+
+                actionToDo = attack;
+                if (!actionToDo.doAutoAction(this)) {
+                    actionToDo = wait;
+                }
+                actionToDo.doAutoAction(this);
                 finishAction();
                 break;
+
         }
     }
 

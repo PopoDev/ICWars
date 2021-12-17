@@ -86,7 +86,7 @@ public abstract class ICWarsArea extends Area {
     }
 
     public Unit autoAttackSelection(Unit attacker){
-        List<Integer> attackableUnitsIndex = getUnitsIndex(attacker);
+        List<Integer> attackableUnitsIndex = getAttackableUnitsIndex(attacker);
         if(attackableUnitsIndex.isEmpty()) {
             return null;
         }

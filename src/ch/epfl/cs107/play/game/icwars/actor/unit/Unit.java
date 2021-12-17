@@ -6,23 +6,20 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.graphics.HealthBarGraphics;
+import ch.epfl.cs107.play.game.icwars.actor.graphics.HealthLostBarGraphics;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsRange;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.math.Polygon;
-import ch.epfl.cs107.play.math.Shape;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-// TODO Should be an inner class of ICWarsPlayer ?
 public abstract class Unit extends ICWarsActor implements Interactor {
 
     private final Sprite sprite;
@@ -55,14 +52,10 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         handler = new UnitInteractionHandler();
 
         // Extension
-        float height = ICWars.CAMERA_SCALE_FACTOR / 60;
-        float width = ICWars.CAMERA_SCALE_FACTOR / 12;
-        float relativeWidth = .085f;
-        float relativeHeight = sprite.getHeight()/2 + .2f;
-        Shape rect = new Polygon(relativeWidth, relativeHeight, relativeWidth, relativeHeight + height,
-                relativeWidth + width, relativeHeight + height, relativeWidth + width, relativeHeight);
-        hpBar = new HealthBarGraphics(rect, Color.GREEN, null, 0f, 0.7f, 3000f);
+        hpBar = new HealthBarGraphics(barWidth, barHeight, sprite);
         hpBar.setParent(this);
+        hpLostBar = new HealthLostBarGraphics(barWidth, 0, barHeight, sprite);
+        hpLostBar.setParent(this);
     }
 
     public String getName() { return name; }
@@ -98,13 +91,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         hp -= damage;
         if (hp < 0) { hp = 0; }
 
-        float height = ICWars.CAMERA_SCALE_FACTOR / 60;
-        float width = (ICWars.CAMERA_SCALE_FACTOR / 12) * (((float)hp)/HP_MAX);
-        float relativeWidth = .085f;
-        float relativeHeight = sprite.getHeight()/2 + .2f;
-        Shape rect = new Polygon(relativeWidth, relativeHeight, relativeWidth, relativeHeight + height,
-                relativeWidth + width, relativeHeight + height, relativeWidth + width, relativeHeight);
-        hpBar = new HealthBarGraphics(rect, Color.GREEN, null, 0f, 0.7f, 3000f);
+        changeHpBar();
     }
 
     /**
@@ -114,16 +101,15 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     public void repair(int amount) {
         hp += amount;
         if (hp > HP_MAX) { hp = HP_MAX; }
+
+        changeHpBar();
     }
 
     /**
      * The unit attack an enemy making him loose health
      * @param other the attacked unit
      */
-    public void attack(Unit other) {
-        other.takeDamage(this.getDamage());
-        System.out.println(("attack"));
-    }
+    public void attack(Unit other) { other.takeDamage(this.getDamage()); }
 
     public boolean canAttack(Unit attacked) {
         return canReach(attacked) && !areInSameFaction(this, attacked);
@@ -137,6 +123,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     public void draw(Canvas canvas) {
         sprite.draw(canvas);
         hpBar.draw(canvas);
+        if (hp < HP_MAX) { hpLostBar.draw(canvas); }
     }
 
     /**
@@ -273,9 +260,18 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     // Extension
     //----------------//
 
-    private HealthBarGraphics hpBar;
+    private final HealthBarGraphics hpBar;
+    private final HealthLostBarGraphics hpLostBar;
+    private final float barWidth = ICWars.CAMERA_SCALE_FACTOR / 12;
+    private final float barHeight = ICWars.CAMERA_SCALE_FACTOR / 60;
 
     public boolean canHeal(Unit unit) {
         return canReach(unit) && areInSameFaction(this, unit);
+    }
+
+    private void changeHpBar() {
+        float width = barWidth * ((float)hp / (float)HP_MAX);
+        hpBar.setBarWidth(width);
+        hpLostBar.setBarWidth(width);
     }
 }
