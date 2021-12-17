@@ -42,6 +42,10 @@ public class RealPlayer extends ICWarsPlayer {
 
         playerGUI = new ICWarsPlayerGUI(ICWars.CAMERA_SCALE_FACTOR, this);
         handler = new ICWarsPlayerInteractionHandler();
+
+        money = START_MONEY;
+        playerGUI.getGamePanel().setMoney(money);
+        playerGUI.getGamePanel().setCurrentLevelName(owner.toString());
     }
 
     @Override
@@ -158,8 +162,7 @@ public class RealPlayer extends ICWarsPlayer {
     public List<DiscreteCoordinates> getFieldOfViewCells() { return null; }
 
     /**
-     * Ask other if it accepts interaction with RealPlayer
-     * when the state is SELECT_CELL
+     * Ask an Interactable if it accepts interaction with RealPlayer
      * @param other (Interactable). Not null
      */
     @Override
@@ -199,5 +202,16 @@ public class RealPlayer extends ICWarsPlayer {
         public void interactWith(ICWarsBehavior.ICWarsCell cell) {
             playerGUI.getInfoPanel().setCurrentCell(cell.getType());
         }
+    }
+
+    //----------------//
+    // Extension
+    //----------------//
+    private final int START_MONEY = 100;
+    private int money;
+
+    public void addMoney(int amount) {
+        money += amount;
+        playerGUI.getGamePanel().setMoney(money);
     }
 }

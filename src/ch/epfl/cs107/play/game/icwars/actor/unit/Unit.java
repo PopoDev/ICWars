@@ -60,7 +60,6 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     public int getHp() { return hp; }
 
     public boolean isDead() {
-        //System.out.println(this + "" + (hp <= 0));
         return hp <= 0;
     }
 
