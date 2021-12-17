@@ -161,8 +161,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         IDLE, NORMAL, SELECT_CELL, MOVE_UNIT, ACTION_SELECTION, ACTION;
     }
 
-    // TODO Useful or make attribute protected ?
-
     public PlayerState getState() { return state; }
 
 }

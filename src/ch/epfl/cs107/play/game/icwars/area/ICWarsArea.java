@@ -74,7 +74,7 @@ public abstract class ICWarsArea extends Area {
     }
 
     public int[] attackSelection(Unit attacker, int listIndex) {
-        List<Integer> attackableUnitsIndex = getUnitsIndex(attacker);
+        List<Integer> attackableUnitsIndex = getAttackableUnitsIndex(attacker);
         if (attackableUnitsIndex.isEmpty()) { return new int[] {-1, listIndex}; }  // The list is empty
 
         Keyboard keyboard = getKeyboard();
@@ -105,7 +105,7 @@ public abstract class ICWarsArea extends Area {
         return units.get(index);
     }
 
-    private List<Integer> getUnitsIndex(Unit attacker) {
+    private List<Integer> getAttackableUnitsIndex(Unit attacker) {
         List<Integer> attackableUnitsIndex = new ArrayList<>();
         for (Unit unit : units) {
             if (attacker.canAttack(unit)) {
@@ -124,7 +124,13 @@ public abstract class ICWarsArea extends Area {
     //----------------//
     // Extension
     //----------------//
-    public List<Unit> getUnitsAround() {
-        return null;
+    public List<Integer> getUnitsToHeal(Unit selectedUnit) {
+        List<Integer> unitsAroundIndex = new ArrayList<>();
+        for (Unit unit : units) {
+            if (selectedUnit.canHeal(unit)) {
+                unitsAroundIndex.add(units.indexOf(unit));
+            }
+        }
+        return unitsAroundIndex;
     }
 }

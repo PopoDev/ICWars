@@ -12,17 +12,26 @@ import ch.epfl.cs107.play.window.Keyboard;
 //----------------//
 public class Heal extends Action {
 
+    private final int healAmount;
+
     public Heal(Unit unit, Area area) {
         super(unit, area, "(H)eal", Keyboard.H);
+
+        healAmount = unit.getDamage();  // Damage for a Medic is the amount of heal he gives
     }
 
     private void healUnitsAround() {
-        ((ICWarsArea)area).getUnitsAround();
+        for (int index : ((ICWarsArea)area).getUnitsToHeal(linkedUnit)) {
+            Unit healedUnit = ((ICWarsArea) area).getUnitFromIndex(index);
+            healedUnit.repair(healAmount);
+        }
     }
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
-
+        healUnitsAround();
+        linkedUnit.setAvailable(false);
+        player.finishAction();
     }
 
     public boolean doAutoAction(ICWarsPlayer player) {
