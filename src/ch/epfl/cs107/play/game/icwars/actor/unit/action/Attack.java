@@ -45,6 +45,16 @@ public class Attack extends Action {
         }
     }
 
+    public boolean doAutoAction(ICWarsPlayer player){
+        attackedUnit = ((ICWarsArea)area).autoAttackSelection(linkedUnit);
+        if(attackedUnit == null) { return false; }
+        linkedUnit.setAvailable(false);
+        player.centerCamera();
+        player.finishAction();
+        linkedUnit.attack(attackedUnit);
+        return true;
+    }
+
     @Override
     public void draw(Canvas canvas) {
         if (attackedUnit == null) { return; }

@@ -19,5 +19,14 @@ public class Wait extends Action {
     }
 
     @Override
+    public boolean doAutoAction(ICWarsPlayer player) {
+        linkedUnit.setAvailable(false);
+        player.finishAction();
+        //System.out.println(("wait"));
+        return true;
+    }
+
+
+    @Override
     public void draw(Canvas canvas) {}
 }

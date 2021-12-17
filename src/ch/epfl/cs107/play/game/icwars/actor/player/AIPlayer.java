@@ -58,7 +58,7 @@ public class AIPlayer extends ICWarsPlayer {
 
     @Override
     public void update(float deltaTime) {
-        if(waitFor(10, deltaTime)) {
+        if(waitFor(100, deltaTime)) {
             updateStates(deltaTime);
         }
         super.update(deltaTime);
@@ -84,8 +84,15 @@ public class AIPlayer extends ICWarsPlayer {
                 state = PlayerState.ACTION;
                 break;
             case ACTION:
+                System.out.println(selectedUnit);
+                actionToDo = selectedUnit.getActions().get(0);
+                if(actionToDo.doAutoAction(this)) {
+                    actionToDo.doAutoAction(this);
+                } else {
+                    actionToDo = selectedUnit.getActions().get(1);
+                    actionToDo.doAutoAction(this);
+                }
                 finishAction();
-                //actionToDo.doAction(deltaTime, this, keyboard);
                 break;
         }
     }
@@ -152,6 +159,7 @@ public class AIPlayer extends ICWarsPlayer {
         Vector offSet = new Vector(0, 0);
 
         if((Math.abs(enemyPosition.x - x)) <= selectedUnit.getRange()) {
+            //System.out.println("X axis: " + (enemyPosition.x -x));
             offSet = offSet.add(new Vector(enemyPosition.x - x, 0));
         } else {
             if((enemyPosition.x - x) < 0) {
@@ -163,6 +171,7 @@ public class AIPlayer extends ICWarsPlayer {
 
         if((Math.abs(enemyPosition.y - y)) <= selectedUnit.getRange()) {
             offSet = offSet.add(new Vector(0,enemyPosition.y - y));
+            //System.out.println("Y axis: " + (enemyPosition.y -y));
         } else {
             if((enemyPosition.y - y) < 0) {
                 offSet = offSet.add(new Vector(0,-selectedUnit.getRange()));
@@ -172,7 +181,7 @@ public class AIPlayer extends ICWarsPlayer {
         DiscreteCoordinates finalDestination = coordinates.jump(offSet);
         selectedUnit.changePosition(finalDestination);
 
-        selectedUnit.setAvailable(false);  // No longer usable
+        //selectedUnit.setAvailable(false);  // No longer usable
     }
 
     /**

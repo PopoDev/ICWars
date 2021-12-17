@@ -24,6 +24,8 @@ public abstract class Action implements Graphics {
 
     public abstract void doAction(float dt, ICWarsPlayer player, Keyboard keyboard);
 
+    public abstract boolean doAutoAction(ICWarsPlayer player);
+
     public int getKey() { return key; }
 
     public String getName() { return name; }

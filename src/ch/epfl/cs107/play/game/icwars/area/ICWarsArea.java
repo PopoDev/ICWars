@@ -85,6 +85,22 @@ public abstract class ICWarsArea extends Area {
         return new int[] {attackableUnitsIndex.get(listIndex), listIndex};
     }
 
+    public Unit autoAttackSelection(Unit attacker){
+        List<Integer> attackableUnitsIndex = getUnitsIndex(attacker);
+        if(attackableUnitsIndex.isEmpty()) {
+            return null;
+        }
+        Unit min = getUnitFromIndex(0);
+
+        for(Integer index : attackableUnitsIndex){
+           attacker = getUnitFromIndex(index);
+           if(attacker.getHp() <= min.getHp()){
+               min = attacker;
+           }
+        }
+        return min;
+     }
+
     public Unit getUnitFromIndex(int index) {
         return units.get(index);
     }

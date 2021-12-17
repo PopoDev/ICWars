@@ -97,7 +97,10 @@ public abstract class Unit extends ICWarsActor implements Interactor {
      * The unit attack an enemy making him loose health
      * @param other the attacked unit
      */
-    public void attack(Unit other) { other.takeDamage(this.getDamage()); }
+    public void attack(Unit other) {
+        other.takeDamage(this.getDamage());
+        System.out.println(("attack"));
+    }
 
     public boolean canAttack(Unit attacked) {
         return range.nodeExists(attacked.getCurrentMainCellCoordinates()) && !areInSameFaction(this, attacked);
