@@ -20,7 +20,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     protected final List<Unit> units;
     protected Unit selectedUnit;
 
-    public PlayerState state;
+    protected PlayerState state;
 
     public ICWarsPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position);
@@ -110,6 +110,17 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
             }
         }
         return false;
+    }
+
+    public DiscreteCoordinates[] getUnitCoordinates(){
+        DiscreteCoordinates[] EnemyUnitPosition = new DiscreteCoordinates[units.size()];
+        int unitIndex = 0;
+        for(Unit unit : units){
+            EnemyUnitPosition[unitIndex] = new DiscreteCoordinates(unit.getCurrentMainCellCoordinates().x,
+                    unit.getCurrentMainCellCoordinates().y);
+            unitIndex += 1;
+        }
+        return EnemyUnitPosition;
     }
 
     @Override

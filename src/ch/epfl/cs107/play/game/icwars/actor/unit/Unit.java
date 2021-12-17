@@ -156,6 +156,10 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         return range;
     }
 
+    public int getRange() {
+        return MOVE_RADIUS;
+    }
+
     public void setAvailable(boolean available) {
         this.available = available;
         if (available) {
@@ -234,7 +238,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         }
     }
 
-    public int getRange(){
-        return MOVE_RADIUS;
-    }
+    //----------------//
+    // Extension
+    // ----------------//
 }

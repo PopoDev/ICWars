@@ -2,18 +2,13 @@ package ch.epfl.cs107.play.game.icwars.actor.player;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
-import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
-import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
-import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
-import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
-import ch.epfl.cs107.play.window.Keyboard;
 
 import java.util.List;
 
@@ -21,7 +16,6 @@ public class AIPlayer extends ICWarsPlayer {
 
     private final Sprite sprite;
 
-    private ICWarsPlayerGUI playerGUI;
     private Action actionToDo;
 
     private final ICWarsAIPlayerInteractionHandler handler;
@@ -30,10 +24,9 @@ public class AIPlayer extends ICWarsPlayer {
     private boolean counting;
     private DiscreteCoordinates FinalDestination;
     private RealPlayer enemy;
-    private DiscreteCoordinates[] EnemyUnitPosition;
+    private DiscreteCoordinates[] enemyUnitPosition;
 
-
-    public AIPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
+    public AIPlayer(RealPlayer enemy, Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position, units);
 
         String spriteName;
@@ -45,11 +38,10 @@ public class AIPlayer extends ICWarsPlayer {
 
         sprite = new Sprite(spriteName, 1.f, 1.f,this);
 
-        playerGUI = new ICWarsPlayerGUI(ICWars.CAMERA_SCALE_FACTOR, this);
         handler = new ICWarsAIPlayerInteractionHandler();
 
         this.enemy = enemy;
-        EnemyUnitPosition = enemy.getUnitCoordinates();
+        enemyUnitPosition = enemy.getUnitCoordinates();
     }
 
     @Override
@@ -57,57 +49,52 @@ public class AIPlayer extends ICWarsPlayer {
         if (state != PlayerState.IDLE) {
             sprite.draw(canvas);
         }
-        if (state == PlayerState.MOVE_UNIT || state == PlayerState.ACTION_SELECTION) {
-            playerGUI.setDestination(getCurrentMainCellCoordinates());
-            //playerGUI.setActionsPanel();
-            playerGUI.draw(canvas);
-        }
-
+        /*
         if (state == PlayerState.ACTION) {
             actionToDo.draw(canvas);
         }
+
+         */
     }
 
     @Override
     public void update(float deltaTime) {
-        if(waitFor(1,deltaTime)) {
+        if(waitFor(10, deltaTime)) {
             updateStates(deltaTime);
         }
         super.update(deltaTime);
     }
 
     private void updateStates(float deltaTime) {
-        //if (isAlly()) System.out.println(state);
         switch(state) {
             case IDLE:
                 break;
             case NORMAL:
-                moveTo();
+                enemyUnitPosition = enemy.getUnitCoordinates();
+                for(Unit unit : units) {
+                    if(unit.isAvailable()) {
+                        moveTo(unit);
+                    }
+                }
                 state = PlayerState.MOVE_UNIT;
                 break;
             case MOVE_UNIT:
+                if (selectedUnit.isAvailable()) {
                     moveUnitTo();
-                    state = PlayerState.ACTION;
+                }
+                state = PlayerState.ACTION;
                 break;
             case ACTION:
+                finishAction();
                 //actionToDo.doAction(deltaTime, this, keyboard);
                 break;
         }
-    }
-
-    private boolean moveUnit() {
-        if (selectedUnit.changePosition(getCurrentMainCellCoordinates())) {
-            selectedUnit.setAvailable(false);  // No longer usable
-            return true;
-        }
-        return false;
     }
 
     @Override
     public void finishAction() {
         super.finishAction();
         selectedUnit = null;  // Reset selectedUnit
-        playerGUI.setSelectedUnit(null);
     }
 
     //----------------//
@@ -123,7 +110,7 @@ public class AIPlayer extends ICWarsPlayer {
      * @return
      */
     private boolean waitFor(float value, float dt){
-        if(counting){
+        if(counting) {
             counter += dt;
             if(counter < value) {
                 counting = false;
@@ -146,34 +133,32 @@ public class AIPlayer extends ICWarsPlayer {
         if (state == PlayerState.NORMAL) { other.acceptInteraction(handler); }
     }
 
-    private void moveTo(){
-        for(Unit unit : units) {
-                setCurrentPosition(unit.getCurrentMainCellCoordinates().toVector());
-                selectedUnit = unit;
-        }
+    private void moveTo(Unit unit){
+        // System.out.println(unit.getCurrentMainCellCoordinates().toVector());
+        setCurrentPosition(unit.getPosition());
+        selectedUnit = unit;
     }
 
     /**
      * Changes the position of the unit to the closest position of an enemy unit;
      */
-    private void moveUnitTo(){
+    private void moveUnitTo() {
         // Enemy unit position
-        int EnemyUnitPositionX = EnemyUnitPosition[getClosestEnemyUnit()].x;
-        int EnemyUnitPositionY = EnemyUnitPosition[getClosestEnemyUnit()].y;
+        DiscreteCoordinates enemyPosition = enemyUnitPosition[getClosestEnemyUnit()];
         // AIPlayer position
-        int x = selectedUnit.getCurrentMainCellCoordinates().x;
-        int y = selectedUnit.getCurrentMainCellCoordinates().y;
+        DiscreteCoordinates coordinates = selectedUnit.getCurrentMainCellCoordinates();
+        int x = coordinates.x;
+        int y = coordinates.y;
         // Coordinates of destination, origin on AIPlayer
-        int xFromPosition;
-        int yFromPosition;
+        Vector offSet = new Vector(0, 0);
 
-        if((Math.abs(EnemyUnitPositionX - x)) <= selectedUnit.getRange()) {
-            xFromPosition = EnemyUnitPositionX - x;
+        if((Math.abs(enemyPosition.x - x)) <= selectedUnit.getRange()) {
+            offSet = offSet.add(new Vector(enemyPosition.x - x, 0));
         } else {
-            if((EnemyUnitPositionX - x) < 0) {
-                xFromPosition = -(selectedUnit.getRange());
+            if((enemyPosition.x - x) < 0) {
+                offSet = offSet.add(new Vector(-selectedUnit.getRange(), 0));
             } else {
-                xFromPosition = selectedUnit.getRange();
+                offSet = offSet.add(new Vector(selectedUnit.getRange(), 0));
             }
         }
 
@@ -195,15 +180,13 @@ public class AIPlayer extends ICWarsPlayer {
      * @return index of closest unit;
      */
     private int getClosestEnemyUnit(){
-        int x = selectedUnit.getCurrentMainCellCoordinates().x;
-        int y = selectedUnit.getCurrentMainCellCoordinates().y;
+        DiscreteCoordinates coordinates = selectedUnit.getCurrentMainCellCoordinates();
         double distance;
-        double[] distances = new double[EnemyUnitPosition.length];
+        double[] distances = new double[enemyUnitPosition.length];
         double min = distances[0];
 
-        for(int i = 0 ; i < EnemyUnitPosition.length ; ++i){
-             distance = Math.sqrt((EnemyUnitPosition[i].x * EnemyUnitPosition[i].x) +
-                                  (EnemyUnitPosition[i].y * EnemyUnitPosition[i].y));
+        for(int i = 0; i < enemyUnitPosition.length ; ++i){
+             distance = DiscreteCoordinates.distanceBetween(enemyUnitPosition[i], coordinates);
              distances[i] = distance;
         }
 
@@ -230,7 +213,6 @@ public class AIPlayer extends ICWarsPlayer {
                     return;
                 }
                 selectedUnit = unit;
-                playerGUI.setSelectedUnit(selectedUnit);
             }
         }
     }

@@ -170,18 +170,6 @@ public class RealPlayer extends ICWarsPlayer {
         other.acceptInteraction(handler);
     }
 
-
-    public DiscreteCoordinates[] getUnitCoordinates(){
-        DiscreteCoordinates[] EnemyUnitPosition = new DiscreteCoordinates[units.size()];
-        int unitIndex = 0;
-        for(Unit unit : units){
-            EnemyUnitPosition[unitIndex] = new DiscreteCoordinates(unit.getCurrentMainCellCoordinates().x,
-                                                                   unit.getCurrentMainCellCoordinates().y);
-            unitIndex += 1;
-        }
-        return EnemyUnitPosition;
-    }
-
     private class ICWarsPlayerInteractionHandler implements ICWarsInteractionVisitor {
         @Override
         public void interactWith(Unit unit) {

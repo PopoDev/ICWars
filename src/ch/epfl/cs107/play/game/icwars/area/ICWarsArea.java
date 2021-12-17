@@ -104,4 +104,11 @@ public abstract class ICWarsArea extends Area {
 
     @Override
     public float getCameraScaleFactor() { return ICWars.CAMERA_SCALE_FACTOR; }
+
+    //----------------//
+    // Extension
+    //----------------//
+    public List<Unit> getUnitsAround() {
+        return null;
+    }
 }
