@@ -234,4 +234,8 @@ public abstract class Unit extends ICWarsActor implements Interactor {
             defenseStars = cell.getType().getDefenseStar();
         }
     }
+
+    public int getRange(){
+        return MOVE_RADIUS;
+    }
 }

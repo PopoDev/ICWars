@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars;
 
 import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Soldier;
@@ -133,7 +134,7 @@ public class ICWars extends AreaGame {
         player.centerCamera();
 
         // Player 2 (Enemy)
-        RealPlayer enemyPlayer = new RealPlayer(ICWarsActor.Faction.ENEMY, area, area.getEnemySpawnPosition(),
+        AIPlayer enemyPlayer = new AIPlayer(ICWarsActor.Faction.ENEMY, area, area.getEnemySpawnPosition(),
                 new Tank(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(8, 5)).setName("[E] T1"),
                 new Soldier(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(9, 5)).setName("[E] S1"));
 

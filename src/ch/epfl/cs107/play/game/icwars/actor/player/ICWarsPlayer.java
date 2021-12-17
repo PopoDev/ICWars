@@ -16,10 +16,10 @@ import java.util.List;
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     // List of Units the player has
-    private final List<Unit> units;
+    protected final List<Unit> units;
     protected Unit selectedUnit;
 
-    protected PlayerState state;
+    public PlayerState state;
 
     public ICWarsPlayer(Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
         super(faction, owner, position);
