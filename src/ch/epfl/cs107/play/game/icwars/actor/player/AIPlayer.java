@@ -5,6 +5,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.Attack;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
@@ -17,6 +18,9 @@ public class AIPlayer extends ICWarsPlayer {
     private final Sprite sprite;
 
     private final ICWarsAIPlayerInteractionHandler handler;
+
+    private Action actionToDo;
+    private boolean waitForDrawing = false;
 
     private float counter = 0f;
     private boolean counting = true;
@@ -46,6 +50,13 @@ public class AIPlayer extends ICWarsPlayer {
         if (state != PlayerState.IDLE) {
             sprite.draw(canvas);
         }
+
+        if (state == PlayerState.ACTION) {
+            // Move the AIPlayer cursor to the attacked unit (to make it clearer to the player)
+            if (actionToDo != null && waitForDrawing) {
+                actionToDo.draw(canvas);
+            }
+        }
     }
 
     @Override
@@ -68,8 +79,8 @@ public class AIPlayer extends ICWarsPlayer {
                 for(Unit unit : getPlayerUnits()) {
                     if(unit.isAvailable()) {
                         if (waitFor(.5f, deltaTime)) {
-                            System.out.println(unit);
                             moveTo(unit);
+                            selectedUnit = unit;
                             state = PlayerState.MOVE_UNIT;
                         }
                     }
@@ -85,12 +96,23 @@ public class AIPlayer extends ICWarsPlayer {
                 }
                 break;
             case ACTION:
-                if (waitFor(.5f, deltaTime)) {
+                if (!waitForDrawing) {
                     // Order of actions is important. AI can only attack or wait. If it can't attack, it will wait
                     for (Action action : selectedUnit.getActions()) {
                         if (action.doAutoAction(this)) {
-                            break;  // Can do the action --> stop
+                            if (action instanceof Attack) {
+                                waitForDrawing = true;  // If the action is attack, let the cursor some time to draw
+                            }
+                            actionToDo = action;
+                            break;  // Can do the action --> stop the loop
                         }
+                    }
+                }
+                if (waitForDrawing) {
+                    if (waitFor(.5f, deltaTime)) {
+                        centerCamera();
+                        finishAction();
+                        waitForDrawing = false;
                     }
                 }
                 break;
@@ -98,12 +120,11 @@ public class AIPlayer extends ICWarsPlayer {
     }
 
     /**
-     * Changes the position of the AIPlayer to the selectedUnit.
-     * @param unit the selected units
+     * Move the AIPlayer to the unit's position.
+     * @param unit the target unit
      */
-    private void moveTo(Unit unit){
-        setCurrentPosition(unit.getPosition());
-        selectedUnit = unit;
+    public void moveTo(Unit unit){
+        setCurrentPosition(unit.getCurrentMainCellCoordinates().toVector());
     }
 
     /**

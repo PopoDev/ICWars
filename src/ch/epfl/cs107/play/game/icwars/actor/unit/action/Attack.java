@@ -3,8 +3,8 @@ package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 import ch.epfl.cs107.play.game.actor.ImageGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
+import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
-import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -25,13 +25,6 @@ public class Attack extends Action {
                  new RegionOfInterest(4*18 , 26*18 ,16 ,16));
     }
 
-    private void attackAction(ICWarsPlayer player) {
-        linkedUnit.attack(attackedUnit);
-        linkedUnit.setAvailable(false);
-        player.centerCamera();
-        player.finishAction();
-    }
-
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         super.doAction(dt, player, keyboard);
@@ -48,7 +41,10 @@ public class Attack extends Action {
         attackedUnit = ((ICWarsArea)area).getUnitFromIndex(attackedIndex);
 
         if (keyboard.get(Keyboard.ENTER).isPressed()) {
-            attackAction(player);
+            linkedUnit.attack(attackedUnit);
+            linkedUnit.setAvailable(false);
+            player.centerCamera();
+            player.finishAction();
         }
     }
 
@@ -57,15 +53,13 @@ public class Attack extends Action {
      * @param player AI player;
      * @return true if there's a unit to attack, otherwise false;
      */
+    @Override
     public boolean doAutoAction(ICWarsPlayer player){
         attackedUnit = ((ICWarsArea)area).autoAttackSelection(linkedUnit);
-        //move  the AIPlayer to the attacked unit (to make it clearer to the player);
-        if(attackedUnit != null){
-            player.setCurrentPosition(attackedUnit.getCurrentMainCellCoordinates().toVector());
-        }
         if(attackedUnit == null) { return false; }
 
-        attackAction(player);
+        linkedUnit.attack(attackedUnit);
+        // Don't finish directly to let the cursor some time to draw
         return true;
     }
 

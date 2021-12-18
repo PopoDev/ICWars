@@ -21,7 +21,7 @@ public class RealPlayer extends ICWarsPlayer {
 
     private final Sprite sprite;
 
-    private final int MOVE_DURATION = 3;
+    private final int MOVE_DURATION = 5;
 
     private final ICWarsPlayerGUI playerGUI;
     private Action actionToDo;
@@ -169,7 +169,9 @@ public class RealPlayer extends ICWarsPlayer {
      */
     @Override
     public void interactWith(Interactable other) {
-        other.acceptInteraction(handler);
+        if (!isDisplacementOccurs()) {
+            other.acceptInteraction(handler);
+        }
     }
 
     private class ICWarsPlayerInteractionHandler implements ICWarsInteractionVisitor {

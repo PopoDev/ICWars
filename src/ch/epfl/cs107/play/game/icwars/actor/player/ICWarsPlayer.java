@@ -18,7 +18,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     // List of Units the player has
     private final List<Unit> units;
-    protected final List<Unit> unregisteredUnits;;
+    private final List<Unit> unregisteredUnits;
     protected Unit selectedUnit;
 
     protected PlayerState state;

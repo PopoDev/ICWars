@@ -99,7 +99,7 @@ public abstract class AreaEntity extends Entity implements Interactable {
     /// AreaEntity extends Entity
 
     @Override
-    public void setCurrentPosition(Vector v){
+    protected void setCurrentPosition(Vector v){
         // When updating the current position, also check if we need to update the main cell coordinates
         if(DiscreteCoordinates.isCoordinates(v)){
             this.currentMainCellCoordinates = new DiscreteCoordinates(Math.round(v.x), Math.round(v.y));
