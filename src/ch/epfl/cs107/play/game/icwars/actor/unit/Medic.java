@@ -12,11 +12,11 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 public class Medic extends Unit {
 
     // HP_MAX = 6
-    // MOVE_RADIUS = 1
+    // MOVE_RADIUS = 2
     private final int HEAL = 2;
 
     public Medic(Faction faction, Area owner, DiscreteCoordinates position) {
-        super(faction, owner, position, 6, 1,
+        super(faction, owner, position, 6, 2,
                 new String[]{"icwars/friendlyMedic", "icwars/enemyMedic"});  // Index 0 : Ally / 1 : Enemy
 
         initActions(new Heal(this, owner), new Mend(this, owner), new Wait(this, owner));

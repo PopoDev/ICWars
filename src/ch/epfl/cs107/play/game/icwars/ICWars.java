@@ -85,6 +85,8 @@ public class ICWars extends AreaGame {
                 for (ICWarsPlayer player : players) {
                     if (isPlayerDefeated(player)) {
                         removePlayerDefeated(player);
+                    } else {
+                        player.initTurn();
                     }
                 }
                 if (waitingNextRound.size() <= 1) {
@@ -140,7 +142,7 @@ public class ICWars extends AreaGame {
         player.centerCamera();
 
         // Player 2 (Enemy)
-        AIPlayer enemyPlayer = new AIPlayer(player, ICWarsActor.Faction.ENEMY, area, area.getEnemySpawnPosition(),
+        RealPlayer enemyPlayer = new RealPlayer(ICWarsActor.Faction.ENEMY, area, area.getEnemySpawnPosition(),
                 new Tank(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(8, 5)).setName("[E] T1"),
                 new Soldier(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(9, 5)).setName("[E] S1"));
 

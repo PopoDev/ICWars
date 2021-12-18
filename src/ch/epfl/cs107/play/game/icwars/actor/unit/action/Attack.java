@@ -25,6 +25,13 @@ public class Attack extends Action {
                  new RegionOfInterest(4*18 , 26*18 ,16 ,16));
     }
 
+    private void attackAction(ICWarsPlayer player) {
+        linkedUnit.attack(attackedUnit);
+        linkedUnit.setAvailable(false);
+        player.centerCamera();
+        player.finishAction();
+    }
+
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         super.doAction(dt, player, keyboard);
@@ -41,21 +48,15 @@ public class Attack extends Action {
         attackedUnit = ((ICWarsArea)area).getUnitFromIndex(attackedIndex);
 
         if (keyboard.get(Keyboard.ENTER).isPressed()) {
-            linkedUnit.attack(attackedUnit);
-
-            linkedUnit.setAvailable(false);
-            player.centerCamera();
-            player.finishAction();
+            attackAction(player);
         }
     }
 
     public boolean doAutoAction(ICWarsPlayer player){
         attackedUnit = ((ICWarsArea)area).autoAttackSelection(linkedUnit);
         if(attackedUnit == null) { return false; }
-        linkedUnit.setAvailable(false);
-        player.centerCamera();
-        player.finishAction();
-        linkedUnit.attack(attackedUnit);
+
+        attackAction(player);
         return true;
     }
 

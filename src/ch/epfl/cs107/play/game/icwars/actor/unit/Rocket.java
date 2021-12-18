@@ -7,11 +7,14 @@ import ch.epfl.cs107.play.game.icwars.actor.unit.action.Wait;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
+//----------------//
+// Extension
+//----------------//
 public class Rocket extends Unit {
 
     // HP_MAX = 5
     // MOVE_RADIUS = 3
-    private final int DAMAGE = 2;  // Area damage
+    private final int DAMAGE = 2;  // Area damage --> Warning also do damage to ally around
 
     public Rocket(Faction faction, Area owner, DiscreteCoordinates position) {
         super(faction, owner, position, 5, 3,
@@ -21,7 +24,7 @@ public class Rocket extends Unit {
     }
 
     /**
-     * Attack a Unit with area damage inflicting damage on surrounding units
+     * Attack a Unit with area damage inflicting damage on surrounding units including allies
      * @param other the attacked unit is the center of the area damage
      */
     @Override

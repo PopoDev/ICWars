@@ -17,6 +17,7 @@ import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
@@ -48,7 +49,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
 
         range = setRange(position);
 
-        actions = new ArrayList<>();
+        actions = new LinkedList<>();
         handler = new UnitInteractionHandler();
 
         // Extension
@@ -199,6 +200,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     public abstract int getDamage();
 
     protected void initActions(Action... actions) {
+        // Order of actions is important for doAutoAction
         this.actions.addAll(List.of(actions));  // Immutable List
     }
 

@@ -8,7 +8,7 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 public class Soldier extends Unit {
 
-    // HP_MAX = 5  // TODO Better a static variable or directly a value in constructor
+    // HP_MAX = 5
     // MOVE_RADIUS = 2
     private final int DAMAGE = 2;
 

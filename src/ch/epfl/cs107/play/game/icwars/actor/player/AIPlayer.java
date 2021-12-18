@@ -5,7 +5,6 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
-import ch.epfl.cs107.play.game.icwars.actor.unit.action.Attack;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
@@ -17,13 +16,11 @@ public class AIPlayer extends ICWarsPlayer {
 
     private final Sprite sprite;
 
-    private Action actionToDo;
-
     private final ICWarsAIPlayerInteractionHandler handler;
 
-    private int counter = 0;
+    private float counter = 0f;
     private boolean counting = true;
-    private RealPlayer enemy;
+    private final RealPlayer enemy;
     private DiscreteCoordinates[] enemyUnitPosition;
 
     public AIPlayer(RealPlayer enemy, Faction faction, Area owner, DiscreteCoordinates position, Unit... units) {
@@ -53,9 +50,7 @@ public class AIPlayer extends ICWarsPlayer {
 
     @Override
     public void update(float deltaTime) {
-        if(waitFor(100, deltaTime)) {
-            updateStates(deltaTime);
-        }
+        updateStates(deltaTime);
         super.update(deltaTime);
     }
 
@@ -67,42 +62,38 @@ public class AIPlayer extends ICWarsPlayer {
                 enemyUnitPosition = enemy.getUnitCoordinates();
                 for(Unit unit : getPlayerUnits()) {
                     if(unit.isAvailable()) {
-                        moveTo(unit);
+                        if (waitFor(.5f, deltaTime)) {
+                            moveTo(unit);
+                            state = PlayerState.MOVE_UNIT;
+                        }
                     }
                 }
-                state = PlayerState.MOVE_UNIT;
                 break;
             case MOVE_UNIT:
                 if (selectedUnit.isAvailable()) {
-                    moveUnitTo();
-                }
-                state = PlayerState.ACTION;
-                break;
-            case ACTION:
-                Action attack = null;
-                Action wait = null;
-                for (Action action : selectedUnit.getActions()) {
-                    if (action instanceof Attack) {
-                        attack = action;
-                    } else {
-                        wait = action;
+                    if (waitFor(.5f, deltaTime)) {
+                        moveUnitTo();
+                        moveTo(selectedUnit);
+                        state = PlayerState.ACTION;
                     }
                 }
-
-                actionToDo = attack;
-                if (!actionToDo.doAutoAction(this)) {
-                    actionToDo = wait;
-                }
-                actionToDo.doAutoAction(this);
-                finishAction();
                 break;
-
+            case ACTION:
+                if (waitFor(.5f, deltaTime)) {
+                    for (Action action : selectedUnit.getActions()) {  // Order of actions is important
+                        if (action.doAutoAction(this)) {
+                            break;  // Can do the action --> stop
+                        }
+                    }
+                }
+                break;
         }
     }
 
     @Override
     public void finishAction() {
         super.finishAction();
+        selectedUnit.setAvailable(false);  // No longer usable
         selectedUnit = null;  // Reset selectedUnit
     }
 
@@ -113,28 +104,27 @@ public class AIPlayer extends ICWarsPlayer {
     public List<DiscreteCoordinates> getFieldOfViewCells() { return null; }
 
     /**
-     * Makes the AIPlayer slower, so his movement can be visualized by the player
-     * @param value
-     * @param dt
-     * @return
+     * Ensures that value time elapsed before returning true
+     * @param dt elapsed time
+     * @param value waiting time (in seconds )
+     * @return true if value seconds has elapsed , false otherwise
      */
-    private boolean waitFor(float value, float dt){
-        if(counting) {
+    private boolean waitFor(float value, float dt) {
+        if (counting) {
             counter += dt;
-            if(counter < value) {
+            if (counter > value) {
                 counting = false;
                 return true;
             }
         } else {
-            counter = 0;
+            counter = 0f;
             counting = true;
         }
-        return false;
+        return false ;
     }
 
     /**
-     * Ask other if it accepts interaction with RealPlayer
-     * when the state is SELECT_CELL
+     * Ask other if it accepts interaction with AIPlayer
      * @param other (Interactable). Not null
      */
     @Override
@@ -143,7 +133,6 @@ public class AIPlayer extends ICWarsPlayer {
     }
 
     private void moveTo(Unit unit){
-        // System.out.println(unit.getCurrentMainCellCoordinates().toVector());
         setCurrentPosition(unit.getPosition());
         selectedUnit = unit;
     }
@@ -162,7 +151,6 @@ public class AIPlayer extends ICWarsPlayer {
         Vector offSet = new Vector(0, 0);
 
         if((Math.abs(enemyPosition.x - x)) <= selectedUnit.getRange()) {
-            //System.out.println("X axis: " + (enemyPosition.x -x));
             offSet = offSet.add(new Vector(enemyPosition.x - x, 0));
         } else {
             if((enemyPosition.x - x) < 0) {
@@ -174,21 +162,19 @@ public class AIPlayer extends ICWarsPlayer {
 
         if((Math.abs(enemyPosition.y - y)) <= selectedUnit.getRange()) {
             offSet = offSet.add(new Vector(0,enemyPosition.y - y));
-            //System.out.println("Y axis: " + (enemyPosition.y -y));
         } else {
             if((enemyPosition.y - y) < 0) {
                 offSet = offSet.add(new Vector(0,-selectedUnit.getRange()));
             } else {
-                offSet = offSet.add(new Vector(0,selectedUnit.getRange()));            }
+                offSet = offSet.add(new Vector(0,selectedUnit.getRange()));
+            }
         }
         DiscreteCoordinates finalDestination = coordinates.jump(offSet);
         selectedUnit.changePosition(finalDestination);
-
-        //selectedUnit.setAvailable(false);  // No longer usable
     }
 
     /**
-     * Used to calculate de index of the coordinates of the closest enemy unit;
+     * Used to calculate the index of the coordinates of the closest enemy unit;
      * @return index of closest unit;
      */
     private int getClosestEnemyUnit(){

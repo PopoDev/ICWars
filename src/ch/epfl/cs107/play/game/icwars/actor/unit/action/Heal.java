@@ -24,7 +24,7 @@ public class Heal extends Action {
 
     private void healUnitsAround() {
         for (int index : ((ICWarsArea)area).getUnitsToHeal((Medic) linkedUnit)) {
-            Unit healedUnit = ((ICWarsArea) area).getUnitFromIndex(index);
+            Unit healedUnit = ((ICWarsArea)area).getUnitFromIndex(index);
             healedUnit.repair(healAmount);
         }
     }
