@@ -52,8 +52,17 @@ public class Attack extends Action {
         }
     }
 
+    /**
+     * Resolve automatically the action of the AI player;
+     * @param player AI player;
+     * @return true if there's a unit to attack, otherwise false;
+     */
     public boolean doAutoAction(ICWarsPlayer player){
         attackedUnit = ((ICWarsArea)area).autoAttackSelection(linkedUnit);
+        //move  the AIPlayer to the attacked unit (to make it clearer to the player);
+        if(attackedUnit != null){
+            player.setCurrentPosition(attackedUnit.getCurrentMainCellCoordinates().toVector());
+        }
         if(attackedUnit == null) { return false; }
 
         attackAction(player);

@@ -21,7 +21,7 @@ public class RealPlayer extends ICWarsPlayer {
 
     private final Sprite sprite;
 
-    private final int MOVE_DURATION = 5;
+    private final int MOVE_DURATION = 3;
 
     private final ICWarsPlayerGUI playerGUI;
     private Action actionToDo;
