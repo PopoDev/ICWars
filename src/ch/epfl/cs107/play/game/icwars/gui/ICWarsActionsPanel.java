@@ -4,6 +4,7 @@ import ch.epfl.cs107.play.game.actor.Graphics;
 import ch.epfl.cs107.play.game.actor.ShapeGraphics;
 import ch.epfl.cs107.play.game.actor.TextGraphics;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.Mend;
 import ch.epfl.cs107.play.math.*;
 import ch.epfl.cs107.play.math.Polygon;
 import ch.epfl.cs107.play.math.Shape;
@@ -38,7 +39,14 @@ public class ICWarsActionsPanel implements Graphics {
     private void createActionsText() {
         actionsText = new TextGraphics[actions.size()];
         for (int i = 0; i < actions.size(); ++i) {
-            TextGraphics text = new TextGraphics(actions.get(i).getName(), fontSize, Color.WHITE, null, 0.0f,
+            // Extension - Start
+            Action action = actions.get(i);
+            if (action instanceof Mend) { ((Mend)action).refreshRepairPrice(); }
+            int price = action.getPrice();
+            // Extension - End
+
+            TextGraphics text = new TextGraphics(action.getName() + " : " + price + '$',
+                    fontSize, Color.WHITE, null, 0.0f,
                     false, false, new Vector(0, -i * 1.25f * fontSize - 0.35f),
                     TextAlign.Horizontal.LEFT, TextAlign.Vertical.MIDDLE, 1.0f, 3001f);
 

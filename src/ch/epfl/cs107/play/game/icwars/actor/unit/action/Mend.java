@@ -14,14 +14,13 @@ public class Mend extends Action {
         super(unit, area, "(M)end", Keyboard.M);
     }
 
-    private void setRepairPrice() {
+    public void refreshRepairPrice() {
         int repairPrice = linkedUnit.getLostHp() * PRICE_FACTOR;
         setPrice(repairPrice);
     }
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
-        setRepairPrice();
         super.doAction(dt, player, keyboard);
 
         linkedUnit.repair(linkedUnit.getLostHp());
