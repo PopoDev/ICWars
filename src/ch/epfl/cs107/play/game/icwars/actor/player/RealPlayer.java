@@ -130,6 +130,7 @@ public class RealPlayer extends ICWarsPlayer {
     @Override
     public void finishAction() {
         super.finishAction();
+        changeMoney(-actionToDo.getPrice());
         selectedUnit.setAvailable(false);  // No longer usable
         selectedUnit = null;  // Reset selectedUnit
         playerGUI.setSelectedUnit(null);

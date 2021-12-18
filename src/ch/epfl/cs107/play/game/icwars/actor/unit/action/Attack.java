@@ -5,7 +5,6 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
-import ch.epfl.cs107.play.game.icwars.actor.unit.Rocket;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -36,7 +35,7 @@ public class Attack extends Action {
 
         // The list of enemy units is empty or the key TAB is pressed
         if (attackedIndex < 0 || keyboard.get(Keyboard.TAB).isPressed()) {
-            player.interruptAttackAction();
+            player.interruptAction();
             return;
         }
         attackedUnit = ((ICWarsArea)area).getUnitFromIndex(attackedIndex);
@@ -47,7 +46,6 @@ public class Attack extends Action {
             linkedUnit.setAvailable(false);
             player.centerCamera();
             player.finishAction();
-            ((RealPlayer) player).changeMoney(-getPrice());
         }
     }
 

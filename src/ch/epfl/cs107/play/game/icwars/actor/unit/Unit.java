@@ -67,9 +67,9 @@ public abstract class Unit extends ICWarsActor implements Interactor {
 
     public int getHp() { return hp; }
 
-    public boolean isDead() {
-        return hp <= 0;
-    }
+    public int getLostHp() { return HP_MAX - hp; }
+
+    public boolean isDead() { return hp <= 0; }
 
     @Override
     public String toString() {

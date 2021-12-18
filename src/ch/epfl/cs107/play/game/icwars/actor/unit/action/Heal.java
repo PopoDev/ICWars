@@ -37,11 +37,8 @@ public class Heal extends Action {
         player.finishAction();
     }
 
-    public boolean doAutoAction(ICWarsPlayer player) {
-        linkedUnit.setAvailable(false);
-        player.finishAction();
-        return true;
-    }
+    @Override
+    public boolean doAutoAction(ICWarsPlayer player) { return false; }
 
     @Override
     public void draw(Canvas canvas) {}

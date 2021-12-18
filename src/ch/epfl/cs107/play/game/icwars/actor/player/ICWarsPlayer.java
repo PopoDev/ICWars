@@ -5,6 +5,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.Action;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarsInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -106,11 +107,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     public void interruptAction() {
         centerCamera();
         state = PlayerState.ACTION_SELECTION;
-    }
-
-    public void interruptAttackAction() {
-        centerCamera();
-        interruptAction();
     }
 
     public void setAllUnitAvailable(boolean available) {

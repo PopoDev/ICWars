@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars.actor.unit;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Heal;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.Mend;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.Wait;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
@@ -18,7 +19,7 @@ public class Medic extends Unit {
         super(faction, owner, position, 6, 1,
                 new String[]{"icwars/friendlyMedic", "icwars/enemyMedic"});  // Index 0 : Ally / 1 : Enemy
 
-        initActions(new Wait(this, owner), new Heal(this, owner));
+        initActions(new Heal(this, owner), new Mend(this, owner), new Wait(this, owner));
     }
 
     /**
