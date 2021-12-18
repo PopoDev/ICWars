@@ -4,6 +4,7 @@ import ch.epfl.cs107.play.game.actor.ImageGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
+import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Rocket;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
@@ -19,6 +20,7 @@ public class Attack extends Action {
 
     public Attack(Unit unit, Area area) {
         super(unit, area, "(A)ttack", Keyboard.A);
+        setPrice(50);
 
         cursor = new ImageGraphics(ResourcePath.getSprite("icwars/UIpackSheet"), 1f, 1f,
                  new RegionOfInterest(4*18 , 26*18 ,16 ,16));
@@ -26,6 +28,8 @@ public class Attack extends Action {
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
+        super.doAction(dt, player, keyboard);
+
         int[] actionValues = ((ICWarsArea)area).attackSelection(linkedUnit, listIndex);
         int attackedIndex = actionValues[0];
         listIndex = actionValues[1];
@@ -43,6 +47,7 @@ public class Attack extends Action {
             linkedUnit.setAvailable(false);
             player.centerCamera();
             player.finishAction();
+            ((RealPlayer) player).changeMoney(-getPrice());
         }
     }
 

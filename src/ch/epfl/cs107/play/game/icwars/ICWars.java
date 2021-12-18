@@ -224,7 +224,7 @@ public class ICWars extends AreaGame {
     private void addMoneyEachTurn(int amount) {
         for (ICWarsPlayer player : players) {
             if (player instanceof RealPlayer) {  // Only for real player for now
-                ((RealPlayer) player).addMoney(amount);
+                ((RealPlayer) player).changeMoney(amount);
             }
         }
     }

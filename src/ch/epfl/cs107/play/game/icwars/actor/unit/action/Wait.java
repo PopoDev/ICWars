@@ -10,6 +10,7 @@ public class Wait extends Action {
 
     public Wait(Unit unit, Area area) {
         super(unit, area, "(W)ait", Keyboard.W);
+        setPrice(0);
     }
 
     @Override
@@ -22,10 +23,8 @@ public class Wait extends Action {
     public boolean doAutoAction(ICWarsPlayer player) {
         linkedUnit.setAvailable(false);
         player.finishAction();
-        //System.out.println(("wait"));
         return true;
     }
-
 
     @Override
     public void draw(Canvas canvas) {}

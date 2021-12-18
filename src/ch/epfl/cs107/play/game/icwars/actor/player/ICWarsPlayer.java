@@ -103,9 +103,14 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         state = PlayerState.NORMAL;
     }
 
-    public void interruptAttackAction() {
+    public void interruptAction() {
         centerCamera();
         state = PlayerState.ACTION_SELECTION;
+    }
+
+    public void interruptAttackAction() {
+        centerCamera();
+        interruptAction();
     }
 
     public void setAllUnitAvailable(boolean available) {

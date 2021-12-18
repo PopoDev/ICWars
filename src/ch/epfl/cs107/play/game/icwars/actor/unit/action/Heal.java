@@ -17,6 +17,7 @@ public class Heal extends Action {
 
     public Heal(Unit unit, Area area) {
         super(unit, area, "(H)eal", Keyboard.H);
+        setPrice(40);
 
         healAmount = unit.getDamage();  // Damage for a Medic is the amount of heal he gives
     }
@@ -30,6 +31,7 @@ public class Heal extends Action {
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
+        super.doAction(dt, player, keyboard);
         healUnitsAround();
         linkedUnit.setAvailable(false);
         player.finishAction();
@@ -42,7 +44,5 @@ public class Heal extends Action {
     }
 
     @Override
-    public void draw(Canvas canvas) {
-
-    }
+    public void draw(Canvas canvas) {}
 }

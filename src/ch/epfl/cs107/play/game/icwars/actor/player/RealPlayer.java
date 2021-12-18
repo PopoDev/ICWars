@@ -198,8 +198,10 @@ public class RealPlayer extends ICWarsPlayer {
     private final int START_MONEY = 100;
     private int money;
 
-    public void addMoney(int amount) {
+    public void changeMoney(int amount) {
         money += amount;
         playerGUI.getGamePanel().setMoney(money);
     }
+
+    public int getMoney() { return money; }
 }
