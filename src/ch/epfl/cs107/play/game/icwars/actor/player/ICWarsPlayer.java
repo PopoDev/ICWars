@@ -34,6 +34,11 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         state = PlayerState.IDLE;
     }
 
+    /**
+     * Register all the player units : will be added at next update
+     * @param owner the area in which the units are registered
+     * @param units the list of units to be added
+     */
     private void registerUnits(Area owner, List<Unit> units) {
         for (Unit unit : units) {
             owner.registerActor(unit);
@@ -41,6 +46,12 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         }
     }
 
+    /**
+     * Unregister a list of units : will be removed at next update
+     * @param owner the area in which the units are unregistered
+     * @param units the list of units to be removed
+     * @param becauseDestroyed <code>true</code> when the units are removed because of taking damage
+     */
     private void unregisterUnits(Area owner, List<Unit> units, boolean becauseDestroyed) {
         for (Unit unit : units) {
             if (becauseDestroyed) {
@@ -52,7 +63,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         }
     }
 
-    /** Unregister a unit : it is removed from the player list */
+    /** Unregister a unit : it is removed from the player list. */
     public void unregisterUnit(Unit unit) {
         unregisteredUnits.add(unit);
     }
@@ -63,19 +74,19 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         unregisteredUnits.clear();
     }
 
-    /** Center the camera on the player */
+    /** Center the camera on the player. */
     public void centerCamera() {
         getOwnerArea().setViewCandidate(this);
     }
 
-    /** Unregister this player when it leaves the area */
+    /** Unregister this player when it leaves the area. */
     @Override
     public void leaveArea(){
         unregisterUnits(getOwnerArea(), units, false);
         getOwnerArea().unregisterActor(this);
     }
 
-    /** Return <code>true</code> if the ICWarsPlayer has zero unit */
+    /** Return <code>true</code> if the ICWarsPlayer has zero unit. */
     public boolean isDefeated() { return units.size() == 0; }
 
     @Override
@@ -86,39 +97,47 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         super.update(deltaTime);
     }
 
+    /** Initialize player turn. All his units are made available. */
     public void initTurn() {
         setAllUnitAvailable(true);
     }
 
+    /** Start player turn. Make the camera centered and pass in NORMAL state. */
     public void startTurn() {
         state = PlayerState.NORMAL;
         centerCamera();
     }
 
+    /** Returns <code>true</code> if the player has no more units available. */
     public boolean finishedTurn() {
         return !unitsAreAvailable();
     }
 
+    /** Finish player turn. All units are made unavailable and pass in IDLE state. */
     public void finishTurn() {
         setAllUnitAvailable(false);
         state = PlayerState.IDLE;
     }
 
+    /** When a unit finishes an action, the player pass to NORMAL state. */
     public void finishAction() {
         state = PlayerState.NORMAL;
     }
 
+    /** When a unit interrupt an action, the player pass to ACTION_SELECTION state. */
     public void interruptAction() {
         centerCamera();
         state = PlayerState.ACTION_SELECTION;
     }
 
+    /** Change all units availability. */
     private void setAllUnitAvailable(boolean available) {
         for (Unit unit : units) {
             unit.setAvailable(available);
         }
     }
 
+    /** Returns <code>true</code> if all units are available, <code>false</code> otherwise. */
     private boolean unitsAreAvailable() {
         for (Unit unit : units) {
             if (unit.isAvailable()) {
@@ -136,16 +155,25 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         return new ArrayList<>(units);
     }
 
+    /** Returns an Array containing the coordinates of the player's units. */
     public DiscreteCoordinates[] getUnitCoordinates(){
-        DiscreteCoordinates[] EnemyUnitPosition = new DiscreteCoordinates[units.size()];
+        DiscreteCoordinates[] enemyUnitPosition = new DiscreteCoordinates[units.size()];
         int unitIndex = 0;
         for(Unit unit : units){
-            EnemyUnitPosition[unitIndex] = new DiscreteCoordinates(unit.getCurrentMainCellCoordinates().x,
+            enemyUnitPosition[unitIndex] = new DiscreteCoordinates(unit.getCurrentMainCellCoordinates().x,
                     unit.getCurrentMainCellCoordinates().y);
             unitIndex += 1;
         }
-        return EnemyUnitPosition;
+        return enemyUnitPosition;
     }
+
+    /** Describe the player state */
+    public enum PlayerState {
+        IDLE, NORMAL, SELECT_CELL, MOVE_UNIT, ACTION_SELECTION, ACTION;
+    }
+
+    /** Returns the player state */
+    public PlayerState getState() { return state; }
 
     @Override
     public void onLeaving(List<DiscreteCoordinates> coordinates) {
@@ -153,12 +181,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
             state = PlayerState.NORMAL;
         }
     }
-
-    public enum PlayerState {
-        IDLE, NORMAL, SELECT_CELL, MOVE_UNIT, ACTION_SELECTION, ACTION;
-    }
-
-    public PlayerState getState() { return state; }
 
     //----------------//
     // Interactable

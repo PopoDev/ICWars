@@ -123,8 +123,23 @@ public class RealPlayer extends ICWarsPlayer {
         }
     }
 
+    /** Move the unit to the player current position */
     private boolean moveUnit() {
         return selectedUnit.changePosition(getCurrentMainCellCoordinates());
+    }
+
+    /**
+     * Orientate and Move this player in the given orientation if the given button is down
+     * @param orientation (Orientation): given orientation, not null
+     * @param key (Button): button key corresponding to the given orientation, not null
+     */
+    private void moveIfPressed(Orientation orientation, Button key){
+        if(key.isDown()) {
+            if (!isDisplacementOccurs()) {
+                orientate(orientation);
+                move(MOVE_DURATION);
+            }
+        }
     }
 
     @Override
@@ -140,20 +155,6 @@ public class RealPlayer extends ICWarsPlayer {
     public void onLeaving(List<DiscreteCoordinates> coordinates) {
         super.onLeaving(coordinates);
         playerGUI.getInfoPanel().setUnit(null);
-    }
-
-    /**
-     * Orientate and Move this player in the given orientation if the given button is down
-     * @param orientation (Orientation): given orientation, not null
-     * @param key (Button): button key corresponding to the given orientation, not null
-     */
-    private void moveIfPressed(Orientation orientation, Button key){
-        if(key.isDown()) {
-            if (!isDisplacementOccurs()) {
-                orientate(orientation);
-                move(MOVE_DURATION);
-            }
-        }
     }
 
     //----------------//
@@ -199,10 +200,15 @@ public class RealPlayer extends ICWarsPlayer {
     private final int START_MONEY = 100;
     private int money;
 
+    /**
+     * Add/Remove money from the player balance.
+     * @param amount the amount to be added, can be negative (removing money)
+     */
     public void changeMoney(int amount) {
         money += amount;
         playerGUI.getGamePanel().setMoney(money);
     }
 
+    /** Returns the player money */
     public int getMoney() { return money; }
 }

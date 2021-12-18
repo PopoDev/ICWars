@@ -77,7 +77,7 @@ public class ICWars extends AreaGame {
                 break;
             case END_PLAYER_TURN :
                 if (isPlayerDefeated(currentlyActivePlayer)) {
-                    removePlayerDefeated(currentlyActivePlayer);
+                    removePlayer(currentlyActivePlayer);
                     currentlyActivePlayer = null;
                 } else {
                     if (currentlyActivePlayer != null) { waitingNextRound.add(currentlyActivePlayer); }
@@ -87,7 +87,7 @@ public class ICWars extends AreaGame {
             case END_TURN :
                 for (ICWarsPlayer player : players) {
                     if (isPlayerDefeated(player)) {
-                        removePlayerDefeated(player);
+                        removePlayer(player);
                     } else {
                         player.initTurn();
                     }
@@ -125,11 +125,16 @@ public class ICWars extends AreaGame {
         System.out.println("Game Over");
     }
 
+    /** Add all the Levels */
     private void createAreas() {
         addArea(new Level0());
         addArea(new Level1());
     }
 
+    /**
+     * Initialize an area and add the players
+     * @param areaTitle the title of the area
+     */
     private void initArea(String areaTitle) {
         ICWarsArea area = (ICWarsArea) setCurrentArea(areaTitle, true);
 
@@ -153,12 +158,19 @@ public class ICWars extends AreaGame {
         enemyPlayer.enterArea(area, area.getEnemySpawnPosition());
     }
 
+    /** Start next Level when the key N is released
+     * @param key the key to press (N)
+     */
     private void buttonNextLevel(Button key) {
         if (key.isReleased()) {
             nextLevel();
         }
     }
 
+    /**
+     * Start the next Level.
+     * All the remaining Actors are removed and a new area is initialized
+     */
     private void nextLevel() {
         if (areaIndex < areas.length - 1) {
             System.out.println("Next level");
@@ -177,12 +189,18 @@ public class ICWars extends AreaGame {
         }
     }
 
+    /** Reset the game the key R is released
+     * @param key the key to press (R)
+     */
     private void buttonReset(Button key) {
         if (key.isReleased()) {
             reset();
         }
     }
 
+    /** Reset the game.
+     * All Actors are removed and the first Level is initialized.
+     */
     private void reset() {
         System.out.println("Reset");
         gameState = GameState.INIT;
@@ -197,17 +215,20 @@ public class ICWars extends AreaGame {
         initArea(areas[areaIndex]);
     }
 
+    /** Returns <code>true</code> if the player has no more units. */
     private boolean isPlayerDefeated(ICWarsPlayer player) {
         if (player == null) { return false; }
         return player.isDefeated();
     }
 
-    private void removePlayerDefeated(ICWarsPlayer player) {
+    /** Unregister the player from the area and the game. */
+    private void removePlayer(ICWarsPlayer player) {
         player.leaveArea();  // Unregister the player from the game
         waitingNextRound.remove(player);
         players.remove(player);
     }
 
+    /** Clear all the collections storing players */
     private void clearPlayers() {
         players.clear();
         waitingCurrentRound.clear();
@@ -215,6 +236,7 @@ public class ICWars extends AreaGame {
         currentlyActivePlayer = null;
     }
 
+    /** Describe the course of a game */
     private enum GameState {
         INIT, CHOOSE_PLAYER,
         START_PLAYER_TURN, PLAYER_TURN, END_PLAYER_TURN,
@@ -226,6 +248,7 @@ public class ICWars extends AreaGame {
     //----------------//
     private final int MONEY_EACH_TURN = 100;
 
+    /** Give money to all RealPlayers after a round */
     private void addMoneyEachTurn(int amount) {
         for (ICWarsPlayer player : players) {
             if (player instanceof RealPlayer) {  // Only for real player for now

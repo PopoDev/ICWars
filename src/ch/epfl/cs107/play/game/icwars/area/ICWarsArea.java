@@ -74,6 +74,12 @@ public abstract class ICWarsArea extends Area {
         unregisteredUnits.clear();
     }
 
+    /**
+     * Let the player select the Unit to attack
+     * @param attacker the unit who is attacking
+     * @param listIndex the previous index selected
+     * @return the index of the attacked Unit and the current index
+     */
     public int[] attackSelection(Unit attacker, int listIndex) {
         List<Integer> attackableUnitsIndex = getAttackableUnitsIndex(attacker);
         if (attackableUnitsIndex.isEmpty()) { return new int[] {-1, listIndex}; }  // The list is empty
@@ -86,6 +92,11 @@ public abstract class ICWarsArea extends Area {
         return new int[] {attackableUnitsIndex.get(listIndex), listIndex};
     }
 
+    /**
+     * Selects the Unit in range of the attacker with the lowest hp
+     * @param attacker the unit who is attacking
+     * @return the index of the Unit with the lowest hp
+     */
     public Unit autoAttackSelection(Unit attacker){
         List<Integer> attackableUnitsIndex = getAttackableUnitsIndex(attacker);
         if(attackableUnitsIndex.isEmpty()) {
@@ -102,10 +113,12 @@ public abstract class ICWarsArea extends Area {
         return min;
      }
 
+    /** Returns the Unit stored at this index in ICWarsArea */
     public Unit getUnitFromIndex(int index) {
         return units.get(index);
     }
 
+    /** Returns all the enemies units in range of attack of the attacker */
     private List<Integer> getAttackableUnitsIndex(Unit attacker) {
         List<Integer> attackableUnitsIndex = new ArrayList<>();
         for (Unit unit : units) {
@@ -116,7 +129,9 @@ public abstract class ICWarsArea extends Area {
         return attackableUnitsIndex;
     }
 
+    /** Returns the player spawn coordinates */
     public abstract DiscreteCoordinates getPlayerSpawnPosition();
+    /** Returns the enemy spawn coordinates */
     public abstract DiscreteCoordinates getEnemySpawnPosition();
 
     @Override
@@ -125,6 +140,8 @@ public abstract class ICWarsArea extends Area {
     //----------------//
     // Extension
     //----------------//
+
+    /** Returns the list of units that are in cells just nearby (Radius of 1) */
     public List<Integer> getNeighbourUnits(Unit selectedUnit) {
         List<Integer> unitsAroundIndex = new ArrayList<>();
         for (Unit unit : units) {
@@ -135,6 +152,7 @@ public abstract class ICWarsArea extends Area {
         return unitsAroundIndex;
     }
 
+    /** Returns the list of units that can be healed */
     public List<Integer> getUnitsToHeal(Medic selectedUnit) {
         List<Integer> unitsToHealIndex = new ArrayList<>();
         for (int index : getNeighbourUnits(selectedUnit)) {

@@ -97,48 +97,10 @@ public class AIPlayer extends ICWarsPlayer {
         }
     }
 
-    @Override
-    public void finishAction() {
-        super.finishAction();
-        selectedUnit.setAvailable(false);  // No longer usable
-        selectedUnit = null;  // Reset selectedUnit
-    }
-
-    //----------------//
-    // Interactor
-    //----------------//
-    @Override
-    public List<DiscreteCoordinates> getFieldOfViewCells() { return null; }
-
     /**
-     * Ensures that value time elapsed before returning true
-     * @param dt elapsed time
-     * @param value waiting time (in seconds )
-     * @return true if value seconds has elapsed , false otherwise
+     * Changes the position of the AIPlayer to the selectedUnit.
+     * @param unit the selected units
      */
-    private boolean waitFor(float value, float dt) {
-        if (counting) {
-            counter += dt;
-            if (counter > value) {
-                counting = false;
-                return true;
-            }
-        } else {
-            counter = 0f;
-            counting = true;
-        }
-        return false ;
-    }
-
-    /**
-     * Ask other if it accepts interaction with AIPlayer
-     * @param other (Interactable). Not null
-     */
-    @Override
-    public void interactWith(Interactable other) {
-        if (state == PlayerState.NORMAL) { other.acceptInteraction(handler); }
-    }
-
     private void moveTo(Unit unit){
         setCurrentPosition(unit.getPosition());
         selectedUnit = unit;
@@ -207,6 +169,48 @@ public class AIPlayer extends ICWarsPlayer {
             }
         }
         return 0;
+    }
+
+    @Override
+    public void finishAction() {
+        super.finishAction();
+        selectedUnit.setAvailable(false);  // No longer usable
+        selectedUnit = null;  // Reset selectedUnit
+    }
+
+    /**
+     * Ensures that value time elapsed before returning true
+     * @param dt elapsed time
+     * @param value waiting time (in seconds )
+     * @return true if value seconds has elapsed , false otherwise
+     */
+    private boolean waitFor(float value, float dt) {
+        if (counting) {
+            counter += dt;
+            if (counter > value) {
+                counting = false;
+                return true;
+            }
+        } else {
+            counter = 0f;
+            counting = true;
+        }
+        return false ;
+    }
+
+    //----------------//
+    // Interactor
+    //----------------//
+    @Override
+    public List<DiscreteCoordinates> getFieldOfViewCells() { return null; }
+
+    /**
+     * Ask other if it accepts interaction with AIPlayer
+     * @param other (Interactable). Not null
+     */
+    @Override
+    public void interactWith(Interactable other) {
+        if (state == PlayerState.NORMAL) { other.acceptInteraction(handler); }
     }
 
     private class ICWarsAIPlayerInteractionHandler implements ICWarsInteractionVisitor {

@@ -38,10 +38,14 @@ public abstract class ICWarsActor extends MovableAreaEntity {
         return Collections.singletonList(getCurrentMainCellCoordinates());
     }
 
-    public boolean isAlly() {
-        return faction == Faction.ALLY;
-    }
+    /** Returns <code>true</code> if the actor belongs to ALLY Faction. */
+    public boolean isAlly() { return faction == Faction.ALLY; }
 
+    /**
+     * Returns <code>true</code> if the two actors are in the same Faction.
+     * @param me the first actor
+     * @param other the second actor
+     */
     public boolean areInSameFaction(ICWarsActor me, ICWarsActor other) {
         return me.faction == other.faction;
     }
