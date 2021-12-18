@@ -60,9 +60,15 @@ public class AIPlayer extends ICWarsPlayer {
                 break;
             case NORMAL:
                 enemyUnitPosition = enemy.getUnitCoordinates();
+                if (enemyUnitPosition.length <= 0) {  // Enemy has no more units but AI still has to play other units
+                    finishTurn();
+                    return;
+                }
+
                 for(Unit unit : getPlayerUnits()) {
                     if(unit.isAvailable()) {
                         if (waitFor(.5f, deltaTime)) {
+                            System.out.println(unit);
                             moveTo(unit);
                             state = PlayerState.MOVE_UNIT;
                         }
@@ -80,7 +86,8 @@ public class AIPlayer extends ICWarsPlayer {
                 break;
             case ACTION:
                 if (waitFor(.5f, deltaTime)) {
-                    for (Action action : selectedUnit.getActions()) {  // Order of actions is important
+                    // Order of actions is important. AI can only attack or wait. If it can't attack, it will wait
+                    for (Action action : selectedUnit.getActions()) {
                         if (action.doAutoAction(this)) {
                             break;  // Can do the action --> stop
                         }
@@ -138,7 +145,7 @@ public class AIPlayer extends ICWarsPlayer {
     }
 
     /**
-     * Changes the position of the unit to the closest position of an enemy unit;
+     * Changes the position of the unit to the closest position of an enemy unit.
      */
     private void moveUnitTo() {
         // Enemy unit position
@@ -174,8 +181,8 @@ public class AIPlayer extends ICWarsPlayer {
     }
 
     /**
-     * Used to calculate the index of the coordinates of the closest enemy unit;
-     * @return index of closest unit;
+     * Used to calculate the index of the coordinates of the closest enemy unit.
+     * @return index of the closest unit.
      */
     private int getClosestEnemyUnit(){
         DiscreteCoordinates coordinates = selectedUnit.getCurrentMainCellCoordinates();

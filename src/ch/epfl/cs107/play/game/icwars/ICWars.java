@@ -40,15 +40,18 @@ public class ICWars extends AreaGame {
 
     @Override
     public void update(float deltaTime) {
-        super.update(deltaTime);
-
         Keyboard keyboard = getCurrentArea().getKeyboard();
         buttonNextLevel(keyboard.get(Keyboard.N));
         buttonReset(keyboard.get(Keyboard.R));
 
-        //----------------//
-        // Game dynamics
-        //----------------//
+        // Game dynamic
+        updateGameState(keyboard);
+
+        super.update(deltaTime);
+    }
+
+    /** Manage the game dynamic by updating the GameState */
+    private void updateGameState(Keyboard keyboard) {
         switch (gameState) {
             case INIT :
                 waitingCurrentRound.addAll(players);
@@ -142,7 +145,7 @@ public class ICWars extends AreaGame {
         player.centerCamera();
 
         // Player 2 (Enemy)
-        RealPlayer enemyPlayer = new RealPlayer(ICWarsActor.Faction.ENEMY, area, area.getEnemySpawnPosition(),
+        AIPlayer enemyPlayer = new AIPlayer(player, ICWarsActor.Faction.ENEMY, area, area.getEnemySpawnPosition(),
                 new Tank(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(8, 5)).setName("[E] T1"),
                 new Soldier(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(9, 5)).setName("[E] S1"));
 

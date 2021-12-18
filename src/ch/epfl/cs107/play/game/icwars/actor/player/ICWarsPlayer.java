@@ -100,6 +100,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     }
 
     public void finishTurn() {
+        setAllUnitAvailable(false);
         state = PlayerState.IDLE;
     }
 
