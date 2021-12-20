@@ -30,7 +30,7 @@ public class Mend extends Action {
     }
 
     @Override
-    public boolean doAutoAction(ICWarsPlayer player) { return false; }
+    public boolean doAutoAction(ICWarsPlayer player) { return false; }  // AI repair not implemented
 
     @Override
     public void draw(Canvas canvas) {}

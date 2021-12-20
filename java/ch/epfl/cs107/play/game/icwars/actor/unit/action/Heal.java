@@ -22,23 +22,16 @@ public class Heal extends Action {
         healAmount = unit.getDamage();  // Damage for a Medic is the amount of heal he gives
     }
 
-    private void healUnitsAround() {
-        for (int index : ((ICWarsArea)area).getUnitsToHeal((Medic) linkedUnit)) {
-            Unit healedUnit = ((ICWarsArea)area).getUnitFromIndex(index);
-            healedUnit.repair(healAmount);
-        }
-    }
-
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         super.doAction(dt, player, keyboard);
-        healUnitsAround();
+        ((ICWarsArea)area).healUnitsAround((Medic) linkedUnit, healAmount);
         linkedUnit.setAvailable(false);
         player.finishAction();
     }
 
     @Override
-    public boolean doAutoAction(ICWarsPlayer player) { return false; }
+    public boolean doAutoAction(ICWarsPlayer player) { return false; }  // AI Medic not implemented
 
     @Override
     public void draw(Canvas canvas) {}
