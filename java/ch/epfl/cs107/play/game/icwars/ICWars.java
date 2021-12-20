@@ -1,16 +1,11 @@
 package ch.epfl.cs107.play.game.icwars;
 
 import ch.epfl.cs107.play.game.areagame.AreaGame;
-import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
-import ch.epfl.cs107.play.game.icwars.actor.unit.*;
-import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
-import ch.epfl.cs107.play.game.icwars.area.Level0;
-import ch.epfl.cs107.play.game.icwars.area.Level1;
+import ch.epfl.cs107.play.game.icwars.area.*;
 import ch.epfl.cs107.play.io.FileSystem;
-import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
@@ -22,7 +17,8 @@ public class ICWars extends AreaGame {
 
     public final static float CAMERA_SCALE_FACTOR = 10.f;
 
-    private final String[] areas = {"icwars/Level0", "icwars/Level1"};
+    private final String[] areas = {"icwars/Level0", "icwars/Level1",  // Base Levels
+                                    "icwars/Level2", "icwars/Level3"}; // Testing new Units. We didn't make new images
     private int areaIndex;
 
     private GameState gameState;
@@ -126,6 +122,8 @@ public class ICWars extends AreaGame {
     private void createAreas() {
         addArea(new Level0());
         addArea(new Level1());
+        addArea(new Level2());
+        addArea(new Level3());
     }
 
     /**
@@ -135,25 +133,19 @@ public class ICWars extends AreaGame {
     private void initArea(String areaTitle) {
         ICWarsArea area = (ICWarsArea) setCurrentArea(areaTitle, true);
 
-        // Player 1 (Ally)
-        RealPlayer player = new RealPlayer(ICWarsActor.Faction.ALLY, area, area.getPlayerSpawnPosition(),
-                new Tank(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(1, 4)).setName("[A] T1"),
-                new Soldier(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 5)).setName("[A] S1"),
-                new Medic(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(1, 5)).setName("[A] M1"),
-                new Rocket(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 4)).setName("[A] R1"));
+        area.initPlayers(players);
+        int indexRealPlayer = 0;
+        int indexAIPlayer = 1;
 
-        players.add(player);
-        player.enterArea(area, area.getPlayerSpawnPosition());
-        player.centerCamera();
+        // Player 1 - RealPlayer (Ally)
+        RealPlayer realPlayer = (RealPlayer) players.get(indexRealPlayer);
 
-        // Player 2 (Enemy)
-        AIPlayer enemyPlayer = new AIPlayer(player, ICWarsActor.Faction.ENEMY, area, area.getEnemySpawnPosition(),
-                new Tank(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(8, 5)).setName("[E] T1"),
-                new Soldier(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(7, 5)).setName("[E] S1"),
-                new Rocket(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(8, 4)).setName("[E] R1"),
-                new Tank(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(7, 4)).setName("[E] T2"));
+        realPlayer.enterArea(area, area.getPlayerSpawnPosition());
+        realPlayer.centerCamera();
 
-        players.add(enemyPlayer);
+        // Player 2 - AIPlayer (Enemy)
+        AIPlayer enemyPlayer = (AIPlayer) players.get(indexAIPlayer);
+
         enemyPlayer.enterArea(area, area.getEnemySpawnPosition());
     }
 

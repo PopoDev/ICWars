@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars.area;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.ICWars;
+import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Medic;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Rocket;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
@@ -134,6 +135,12 @@ public abstract class ICWarsArea extends Area {
     /** Returns the enemy spawn coordinates */
     public abstract DiscreteCoordinates getEnemySpawnPosition();
 
+    /**
+     * Initialize the list of players in ICWars
+     * Index 0 : RealPlayer | Index 1 : AIPlayer
+     */
+    public abstract void initPlayers(List<ICWarsPlayer> players);
+
     @Override
     public float getCameraScaleFactor() { return ICWars.CAMERA_SCALE_FACTOR; }
 
@@ -145,7 +152,7 @@ public abstract class ICWarsArea extends Area {
     private List<Unit> getNeighbourUnits(Unit centerUnit) {
         List<Unit> unitsAround = new ArrayList<>();
         for (Unit unit : units) {
-            if (centerUnit.isNextTo(unit)) {
+            if (unit.isNextTo(centerUnit)) {
                 unitsAround.add(unit);
             }
         }
@@ -165,9 +172,10 @@ public abstract class ICWarsArea extends Area {
      * Attack an enemy unit inflicting area damage to all units around a radius of 1.
      * AoE can damage allies too.
      * */
-    public void attackUnitsAround(Rocket rocket) {
-        for (Unit unit : getNeighbourUnits(rocket)) {
-            rocket.attack(unit);
+    public void attackUnitsAround(Unit target, Rocket rocket) {
+        for (Unit unitAround : getNeighbourUnits(target)) {
+            // We want the method attack of Unit. Unit::attack and not Rocket::attack to avoid recursive calls
+            ((Unit)rocket).attack(unitAround, rocket.getDamageAoE());
         }
     }
 }

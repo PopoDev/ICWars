@@ -14,7 +14,8 @@ public class Rocket extends Unit {
 
     // HP_MAX = 5
     // MOVE_RADIUS = 3
-    private final int DAMAGE = 2;  // Area damage --> Warning also do damage to ally around
+    private final int DAMAGE = 3;
+    private final int DAMAGE_AOE = 2; // Area damage --> Warning also do damage to ally around
 
     public Rocket(Faction faction, Area owner, DiscreteCoordinates position) {
         super(faction, owner, position, 5, 3,
@@ -30,12 +31,14 @@ public class Rocket extends Unit {
     @Override
     public void attack(Unit other) {
         ICWarsArea area = (ICWarsArea) getOwnerArea();
-        area.attackUnitsAround(this);  // AoE damage
+        area.attackUnitsAround(other, this);  // AoE damage
         super.attack(other);  // Attack the target
     }
 
     @Override
     public int getDamage() { return DAMAGE; }
+
+    public int getDamageAoE() { return DAMAGE_AOE; }
 
     @Override
     public String toString() {
