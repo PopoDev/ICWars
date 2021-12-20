@@ -137,9 +137,9 @@ public class ICWars extends AreaGame {
 
         // Player 1 (Ally)
         RealPlayer player = new RealPlayer(ICWarsActor.Faction.ALLY, area, area.getPlayerSpawnPosition(),
-                new Tank(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(3, 4)).setName("[A] T1"),
-                new Soldier(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(3, 5)).setName("[A] S1"),
-                new Medic(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 5)).setName("[A] M1"),
+                new Tank(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(1, 4)).setName("[A] T1"),
+                new Soldier(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 5)).setName("[A] S1"),
+                new Medic(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(1, 5)).setName("[A] M1"),
                 new Rocket(ICWarsActor.Faction.ALLY, area, new DiscreteCoordinates(2, 4)).setName("[A] R1"));
 
         players.add(player);
@@ -149,7 +149,9 @@ public class ICWars extends AreaGame {
         // Player 2 (Enemy)
         AIPlayer enemyPlayer = new AIPlayer(player, ICWarsActor.Faction.ENEMY, area, area.getEnemySpawnPosition(),
                 new Tank(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(8, 5)).setName("[E] T1"),
-                new Soldier(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(9, 5)).setName("[E] S1"));
+                new Soldier(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(7, 5)).setName("[E] S1"),
+                new Rocket(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(8, 4)).setName("[E] R1"),
+                new Tank(ICWarsActor.Faction.ENEMY, area, new DiscreteCoordinates(7, 4)).setName("[E] T2"));
 
         players.add(enemyPlayer);
         enemyPlayer.enterArea(area, area.getEnemySpawnPosition());
