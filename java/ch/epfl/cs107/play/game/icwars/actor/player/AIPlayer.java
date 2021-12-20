@@ -78,7 +78,7 @@ public class AIPlayer extends ICWarsPlayer {
 
                 for(Unit unit : getPlayerUnits()) {
                     if(unit.isAvailable()) {
-                        if (waitFor(.5f, deltaTime)) {
+                        if (waitFor(1f, deltaTime)) {
                             moveTo(unit);
                             selectedUnit = unit;
                             state = PlayerState.MOVE_UNIT;
@@ -88,7 +88,7 @@ public class AIPlayer extends ICWarsPlayer {
                 break;
             case MOVE_UNIT:
                 if (selectedUnit.isAvailable()) {
-                    if (waitFor(.5f, deltaTime)) {
+                    if (waitFor(1f, deltaTime)) {
                         moveUnitTo();
                         moveTo(selectedUnit);
                         state = PlayerState.ACTION;
@@ -109,7 +109,7 @@ public class AIPlayer extends ICWarsPlayer {
                     }
                 }
                 if (waitForDrawing) {
-                    if (waitFor(.5f, deltaTime)) {
+                    if (waitFor(1f, deltaTime)) {
                         centerCamera();
                         finishAction();
                         waitForDrawing = false;
@@ -131,7 +131,7 @@ public class AIPlayer extends ICWarsPlayer {
      * Changes the position of the unit to the closest position of an enemy unit.
      */
     private void moveUnitTo() {
-        // Enemy unit position
+        // Enemy (RealPlayer) unit position
         DiscreteCoordinates enemyPosition = enemyUnitPosition[getClosestEnemyUnit()];
         // AIPlayer position
         DiscreteCoordinates coordinates = selectedUnit.getCurrentMainCellCoordinates();
@@ -161,6 +161,44 @@ public class AIPlayer extends ICWarsPlayer {
         }
         DiscreteCoordinates finalDestination = coordinates.jump(offSet);
         selectedUnit.changePosition(finalDestination);
+
+        //if the unit has not moved (because the final destination was already occupied by another unit)
+        while(ShiftHasNotOccurred(new DiscreteCoordinates(selectedUnit.getCurrentMainCellCoordinates().x , selectedUnit.getCurrentMainCellCoordinates().y), finalDestination)){
+            coordinates = selectedUnit.getCurrentMainCellCoordinates();
+            offSet = offSet.add(new Vector(randomNumber(),randomNumber()));
+            finalDestination = coordinates.jump(offSet);
+            if(!positionOutOfRange(finalDestination)){
+                selectedUnit.changePosition((finalDestination));
+            }
+        }
+    }
+
+    /**
+     * Used to make the AI a bit more random and avoid some units not moving
+     * @return number (-1 / 0 / 1)
+     */
+    private int randomNumber(){
+        return (int)Math.round(Math.random() * 2 - 1);
+    }
+
+    /**
+     * Controls if the final position of the unit is in range
+     * @param position final position of the unit
+     * @return true if in range, false otherwise
+     */
+    private boolean positionOutOfRange(DiscreteCoordinates position){
+        return Math.abs(selectedUnit.getCurrentMainCellCoordinates().x - position.x) > selectedUnit.getRange() ||
+                Math.abs(selectedUnit.getCurrentMainCellCoordinates().y - position.y) > selectedUnit.getRange();
+    }
+
+    /**
+     * Controls if the movement has occurred
+     * @param currentPosition starting position of the unit
+     * @param finalPosition ending position of the unit
+     * @return boolean (true if the unit has moved, false otherwise
+     */
+    private boolean ShiftHasNotOccurred(DiscreteCoordinates currentPosition, DiscreteCoordinates finalPosition){
+        return currentPosition.x - finalPosition.x != 0 || currentPosition.y - finalPosition.y != 0;
     }
 
     /**
@@ -171,13 +209,13 @@ public class AIPlayer extends ICWarsPlayer {
         DiscreteCoordinates coordinates = selectedUnit.getCurrentMainCellCoordinates();
         double distance;
         double[] distances = new double[enemyUnitPosition.length];
-        double min = distances[0];
 
         for(int i = 0; i < enemyUnitPosition.length ; ++i){
              distance = DiscreteCoordinates.distanceBetween(enemyUnitPosition[i], coordinates);
              distances[i] = distance;
         }
 
+        double min = distances[0];
         for (double v : distances) {
             if (min > v) {
                 min = v;
@@ -192,6 +230,9 @@ public class AIPlayer extends ICWarsPlayer {
         return 0;
     }
 
+    /**
+     * Ends the action
+     */
     @Override
     public void finishAction() {
         super.finishAction();
