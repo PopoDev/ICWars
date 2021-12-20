@@ -112,6 +112,8 @@ public abstract class Unit extends ICWarsActor implements Interactor {
      */
     public void attack(Unit other) { other.takeDamage(this.getDamage()); }
 
+    public void attack(Unit other, int damage) { other.takeDamage(damage); }
+
     public boolean canAttack(Unit attacked) {
         return canReach(attacked) && !areInSameFaction(this, attacked);
     }
@@ -120,8 +122,10 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         return range.nodeExists(unit.getCurrentMainCellCoordinates());
     }
 
-    public boolean isNextTo(Unit unit) {
-        return this.getCurrentMainCellCoordinates().getNeighbours().contains(unit.getCurrentMainCellCoordinates());
+    public boolean isNextTo(Unit centerUnit) {
+        return Math.abs(getCurrentMainCellCoordinates().x - centerUnit.getCurrentMainCellCoordinates().x) <= 1 &&
+               Math.abs(getCurrentMainCellCoordinates().y - centerUnit.getCurrentMainCellCoordinates().y) <= 1 &&
+               this != centerUnit;
     }
 
     @Override
