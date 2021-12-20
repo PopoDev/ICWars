@@ -16,7 +16,7 @@ public class Level3 extends ICWarsArea {
     public String getTitle() { return "icwars/Level3"; }  // We didn't make new images. Same as Level1
 
     @Override
-    public String toString() { return "Peace"; }
+    public String toString() { return "IC Peace"; }
 
     @Override
     protected void createArea() {
@@ -25,33 +25,43 @@ public class Level3 extends ICWarsArea {
 
     @Override
     public DiscreteCoordinates getPlayerSpawnPosition() {
-        return new DiscreteCoordinates(2, 5);
+        return new DiscreteCoordinates(7, 6);
     }
 
     @Override
-    public DiscreteCoordinates getEnemySpawnPosition() { return new DiscreteCoordinates(17, 5); }
+    public DiscreteCoordinates getEnemySpawnPosition() { return new DiscreteCoordinates(7, 6); }
 
     @Override
     public void initPlayers(List<ICWarsPlayer> players) {
+        int damageTest = 4;  // To test healing
+
         // Player 1 - RealPlayer (Ally)
         RealPlayer player = new RealPlayer(ICWarsActor.Faction.ALLY, this, this.getPlayerSpawnPosition(),
-                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(2, 3)).setName("[A] R1"),
-                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(2, 4)).setName("[A] R2"),
-                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(2, 5)).setName("[A] R3"),
-                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(2, 6)).setName("[A] R4"),
-                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(2, 7)).setName("[A] R5"),
-                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(2, 8)).setName("[A] R6"));
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(3, 3)).takeDamageTest(damageTest).setName("[A] M1"),
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(4, 3)).takeDamageTest(damageTest).setName("[A] M2"),
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(5, 3)).takeDamageTest(damageTest).setName("[A] M3"),
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(4, 4)).takeDamageTest(damageTest).setName("[A] M4"),
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(4, 5)).takeDamageTest(damageTest).setName("[A] M5"),
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(4, 6)).takeDamageTest(damageTest).setName("[A] M6"),
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(4, 7)).takeDamageTest(damageTest).setName("[A] M7"),
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(3, 8)).takeDamageTest(damageTest).setName("[A] M8"),
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(4, 8)).takeDamageTest(damageTest).setName("[A] M9"),
+                new Medic(ICWarsActor.Faction.ALLY, this, new DiscreteCoordinates(5, 8)).takeDamageTest(damageTest).setName("[A] M10"));
         player.changeMoney(1234);  // Start Money
         players.add(player);
 
         // Player 2 - AIPlayer (Enemy)
         AIPlayer enemyPlayer = new AIPlayer(player, ICWarsActor.Faction.ENEMY, this, this.getEnemySpawnPosition(),
-                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(9, 3)).setName("[E] R1"),
-                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(9, 4)).setName("[E] R2"),
-                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(9, 5)).setName("[E] R3"),
-                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(9, 6)).setName("[E] R4"),
-                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(9, 7)).setName("[E] R5"),
-                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(9, 8)).setName("[E] R6"));
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(10, 3)).setName("[E] M1"),
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(9, 3)).setName("[E] M2"),
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(8, 3)).setName("[E] M3"),
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(7, 4)).setName("[E] M4"),
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(7, 5)).setName("[E] M5"),
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(7, 6)).setName("[E] M6"),
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(7, 7)).setName("[E] M7"),
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(8, 8)).setName("[E] M8"),
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(9, 8)).setName("[E] M9"),
+                new Medic(ICWarsActor.Faction.ENEMY, this, new DiscreteCoordinates(10, 8)).setName("[E] M10"));
         players.add(enemyPlayer);
     }
 }

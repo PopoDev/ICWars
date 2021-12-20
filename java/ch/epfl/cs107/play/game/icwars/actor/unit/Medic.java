@@ -38,4 +38,13 @@ public class Medic extends Unit {
     public String toString() {
         return "Medic" + super.toString();
     }
+
+    /**
+     * Make the Medic loose health. Should not be used other than for test purpose
+     * @see ch.epfl.cs107.play.game.icwars.area.Level3;
+     */
+    public Medic takeDamageTest(int damage) {
+        attack(this, damage);  // Doesn't make sense. Only to test heal and not break encapsulation by doing it
+        return this;
+    }
 }
