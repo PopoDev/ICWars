@@ -30,10 +30,8 @@ public class Rocket extends Unit {
     @Override
     public void attack(Unit other) {
         ICWarsArea area = (ICWarsArea) getOwnerArea();
-        for (int index : area.getNeighbourUnits(other)) {
-            super.attack(area.getUnitFromIndex(index));
-        }
-        super.attack(other);
+        area.attackUnitsAround(this);  // AoE damage
+        super.attack(other);  // Attack the target
     }
 
     @Override

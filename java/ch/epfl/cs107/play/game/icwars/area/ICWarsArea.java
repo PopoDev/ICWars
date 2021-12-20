@@ -3,7 +3,9 @@ package ch.epfl.cs107.play.game.icwars.area;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Medic;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Rocket;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.Attack;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Keyboard;
@@ -78,55 +80,53 @@ public abstract class ICWarsArea extends Area {
      * Let the player select the Unit to attack
      * @param attacker the unit who is attacking
      * @param listIndex the previous index selected
-     * @return the index of the attacked Unit and the current index
+     * @return the current index
      */
-    public int[] attackSelection(Unit attacker, int listIndex) {
-        List<Integer> attackableUnitsIndex = getAttackableUnitsIndex(attacker);
-        if (attackableUnitsIndex.isEmpty()) { return new int[] {-1, listIndex}; }  // The list is empty
+    public int attackSelection(Unit attacker, int listIndex, Attack action) {
+        List<Unit> attackableUnits = getAttackableUnits(attacker);
+        if (attackableUnits.isEmpty()) { return -1; }  // The list is empty
 
         Keyboard keyboard = getKeyboard();
         if (keyboard.get(Keyboard.LEFT).isPressed())  { --listIndex; }
         if (keyboard.get(Keyboard.RIGHT).isPressed()) { ++listIndex; }
-        listIndex = Math.floorMod(listIndex, attackableUnitsIndex.size());
+        listIndex = Math.floorMod(listIndex, attackableUnits.size());
 
-        return new int[] {attackableUnitsIndex.get(listIndex), listIndex};
+        action.setAttackedUnit(attackableUnits.get(listIndex));
+
+        return listIndex;
     }
 
     /**
      * Selects the Unit in range of the attacker with the lowest hp
      * @param attacker the unit who is attacking
-     * @return the index of the Unit with the lowest hp
+     * @return <code>True</code> if a target is found, false otherwise
      */
-    public Unit autoAttackSelection(Unit attacker){
-        List<Integer> attackableUnitsIndex = getAttackableUnitsIndex(attacker);
-        if(attackableUnitsIndex.isEmpty()) {
-            return null;
+    public boolean autoAttackSelection(Unit attacker, Attack action){
+        List<Unit> attackableUnits = getAttackableUnits(attacker);
+        if(attackableUnits.isEmpty()) {
+            return false;
         }
-        Unit min = getUnitFromIndex(0);
+        Unit min = attackableUnits.get(0);
 
-        for(Integer index : attackableUnitsIndex){
-           attacker = getUnitFromIndex(index);
-           if(attacker.getHp() <= min.getHp()){
-               min = attacker;
-           }
-        }
-        return min;
-     }
-
-    /** Returns the Unit stored at this index in ICWarsArea */
-    public Unit getUnitFromIndex(int index) {
-        return units.get(index);
-    }
-
-    /** Returns all the enemies units in range of attack of the attacker */
-    private List<Integer> getAttackableUnitsIndex(Unit attacker) {
-        List<Integer> attackableUnitsIndex = new ArrayList<>();
-        for (Unit unit : units) {
-            if (attacker.canAttack(unit)) {
-                attackableUnitsIndex.add(units.indexOf(unit));
+        for(Unit attacked : attackableUnits) {
+            if (attacked.getHp() <= min.getHp()) {
+                min = attacked;
             }
         }
-        return attackableUnitsIndex;
+
+        action.setAttackedUnit(min);
+        return true;
+     }
+
+    /** Returns all the enemies units in range of attack of the attacker */
+    private List<Unit> getAttackableUnits(Unit attacker) {
+        List<Unit> attackableUnits = new ArrayList<>();
+        for (Unit unit : units) {
+            if (attacker.canAttack(unit)) {
+                attackableUnits.add(unit);
+            }
+        }
+        return attackableUnits;
     }
 
     /** Returns the player spawn coordinates */
@@ -141,25 +141,33 @@ public abstract class ICWarsArea extends Area {
     // Extension
     //----------------//
 
-    /** Returns the list of units that are in cells just nearby (Radius of 1) */
-    public List<Integer> getNeighbourUnits(Unit selectedUnit) {
-        List<Integer> unitsAroundIndex = new ArrayList<>();
+    /** Returns the list of units that are in cells just nearby (radius of 1) */
+    private List<Unit> getNeighbourUnits(Unit centerUnit) {
+        List<Unit> unitsAround = new ArrayList<>();
         for (Unit unit : units) {
-            if (selectedUnit.isNextTo(unit)) {
-                unitsAroundIndex.add(units.indexOf(unit));
+            if (centerUnit.isNextTo(unit)) {
+                unitsAround.add(unit);
             }
         }
-        return unitsAroundIndex;
+        return unitsAround;
     }
 
-    /** Returns the list of units that can be healed */
-    public List<Integer> getUnitsToHeal(Medic selectedUnit) {
-        List<Integer> unitsToHealIndex = new ArrayList<>();
-        for (int index : getNeighbourUnits(selectedUnit)) {
-            if (selectedUnit.canHeal(getUnitFromIndex(index))) {
-                unitsToHealIndex.add(index);
+    /** Heal the allies units that are around the Medic (radius of 1) */
+    public void healUnitsAround(Medic medic, int heal) {
+        for (Unit unit : getNeighbourUnits(medic)) {
+            if (medic.canHeal(unit)) {
+                unit.repair(heal);
             }
         }
-        return unitsToHealIndex;
+    }
+
+    /**
+     * Attack an enemy unit inflicting area damage to all units around a radius of 1.
+     * AoE can damage allies too.
+     * */
+    public void attackUnitsAround(Rocket rocket) {
+        for (Unit unit : getNeighbourUnits(rocket)) {
+            rocket.attack(unit);
+        }
     }
 }

@@ -3,7 +3,6 @@ package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 import ch.epfl.cs107.play.game.actor.ImageGraphics;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
-import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
@@ -25,24 +24,28 @@ public class Attack extends Action {
                  new RegionOfInterest(4*18 , 26*18 ,16 ,16));
     }
 
+    public void setAttackedUnit(Unit attackedUnit) {
+        this.attackedUnit = attackedUnit;
+    }
+
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         super.doAction(dt, player, keyboard);
 
-        int[] actionValues = ((ICWarsArea)area).attackSelection(linkedUnit, listIndex);
-        int attackedIndex = actionValues[0];
-        listIndex = actionValues[1];
+        int attackedIndex = ((ICWarsArea)area).attackSelection(linkedUnit, listIndex, this);
 
         // The list of enemy units is empty or the key TAB is pressed
         if (attackedIndex < 0 || keyboard.get(Keyboard.TAB).isPressed()) {
             player.interruptAction();
             return;
+        } else {
+            listIndex = attackedIndex;
         }
-        attackedUnit = ((ICWarsArea)area).getUnitFromIndex(attackedIndex);
 
         if (keyboard.get(Keyboard.ENTER).isPressed()) {
             linkedUnit.attack(attackedUnit);
             linkedUnit.setAvailable(false);
+            attackedUnit = null;
             player.centerCamera();
             player.finishAction();
         }
@@ -55,8 +58,7 @@ public class Attack extends Action {
      */
     @Override
     public boolean doAutoAction(ICWarsPlayer player){
-        attackedUnit = ((ICWarsArea)area).autoAttackSelection(linkedUnit);
-        if(attackedUnit == null) { return false; }
+        if(! ((ICWarsArea)area).autoAttackSelection(linkedUnit, this) ) { return false; }  // No target found
 
         linkedUnit.attack(attackedUnit);
         // Don't finish directly to let the cursor some time to draw
