@@ -34,6 +34,10 @@ après l'utilisation d'une action (si le montant du joueur n'est pas suffisant, 
 - Medic : médecin militaire, l'unité peut réaliser l'action (H)eal qui soigne les alliés autour
 - Rocket : lance-roquettes, tire sur les ennemis en infligeant des dégats de zone (aussi sur les alliés)
 
-###Niveaux :
+###Niveaux (pas de scénario spécifique) :
 
-Pas d'ajouts, niveaux de base : Level0 et Level1 (les unités sont différentes, une de chaque pour tester les extensions)
+Niveaux de base : Level0 et Level1 (les unités sont différentes)
+
+Ajouts : 2 niveaux supplémentaires (Level3 et Level4) qui ont le même background que Level1.
+- Level2 : pour tester les unités Rocket
+- Level3 : pour tester les unités Medic

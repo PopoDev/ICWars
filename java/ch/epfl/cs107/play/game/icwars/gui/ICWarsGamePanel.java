@@ -30,17 +30,17 @@ public class ICWarsGamePanel implements Graphics {
         final float width = cameraScaleFactor / 4;
         this.cameraScaleFactor = cameraScaleFactor;
 
-        fontSize = cameraScaleFactor / 36.0f;
+        fontSize = cameraScaleFactor / 22.0f;
 
         Shape rect = new Polygon(0, 0, 0, height, width, height, width, 0);
         background = new ShapeGraphics(rect, Color.DARK_GRAY, Color.BLACK, 0f, 0.7f, 3000f);
 
         levelText = new TextGraphics("", fontSize, Color.WHITE, null, 0.0f,
-                true, false, new Vector(0, -0.3f),
+                false, false, new Vector(0, -0.2f),
                 TextAlign.Horizontal.LEFT, TextAlign.Vertical.MIDDLE, 1.0f, 3001f);
 
         moneyText = new TextGraphics("", fontSize, Color.WHITE, null, 0.0f,
-                true, false, new Vector(0, -1.5f * fontSize - 0.3f),
+                false, false, new Vector(0, -1.5f * fontSize),
                 TextAlign.Horizontal.LEFT, TextAlign.Vertical.MIDDLE, 1.0f, 3001f);
     }
 
@@ -64,12 +64,12 @@ public class ICWarsGamePanel implements Graphics {
 
         levelText.setRelativeTransform(textTransform);
         levelText.setText("Map : " + level);
-        levelText.setFontName("OpenSans-Bold");
+        levelText.setFontName("Kenney Pixel");
         levelText.draw(canvas);
 
         moneyText.setRelativeTransform(textTransform);
         moneyText.setText("Money : " + money + '$');
-        moneyText.setFontName("OpenSans-Bold");
+        moneyText.setFontName("Kenney Pixel");
         moneyText.draw(canvas);
     }
 }
